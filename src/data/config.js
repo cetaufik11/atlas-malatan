@@ -6,7 +6,7 @@ export const CONFIG = {
   // Email pengelola untuk kiriman via email (opsional).
   email: '',
   // Alamat publik situs (dipakai di QR). Kosongkan = pakai alamat saat ini.
-  publicUrl: '',
+  publicUrl: 'https://cetaufik11.github.io/atlas-malatan/',
   // PIN sederhana mode admin. Hanya pencegah iseng, BUKAN keamanan sungguhan:
   // situs statis tidak bisa menyimpan rahasia. Data asli tetap aman karena
   // suntingan admin hanya tersimpan di perangkat sampai diekspor.

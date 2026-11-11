@@ -13,7 +13,9 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.svg', 'media/*'],
+      // Hanya peta arsip yang ikut terunduh saat aplikasi dipasang. Foto/audio lain di public/media
+      // di-cache saat pertama dibuka (lihat runtimeCaching), video tidak di-cache sama sekali.
+      includeAssets: ['favicon.svg', 'media/peta-arsip-2018.jpg'],
       manifest: {
         name: 'Atlas Malatan — Peta Digital Dusun Malatan',
         short_name: 'Atlas Malatan',
@@ -31,6 +33,7 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,svg,png,jpg,json,woff2}'],
+        globIgnores: ['**/media/**'],
         maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
         runtimeCaching: [
           {
@@ -43,6 +46,12 @@ export default defineConfig({
               expiration: { maxEntries: 6000, maxAgeSeconds: 60 * 60 * 24 * 120 },
               cacheableResponse: { statuses: [0, 200] },
             },
+          },
+          {
+            // Foto & audio situs: simpan setelah pertama dibuka agar bisa dilihat offline.
+            urlPattern: ({ url, sameOrigin }) => sameOrigin && /\/media\/.+\.(jpe?g|png|webp|avif|gif|mp3|m4a|ogg|wav)$/i.test(url.pathname),
+            handler: 'CacheFirst',
+            options: { cacheName: 'atlas-media', expiration: { maxEntries: 400, maxAgeSeconds: 60 * 60 * 24 * 180 } },
           },
           {
             urlPattern: ({ url }) => /fonts\.(googleapis|gstatic)\.com/.test(url.href),
