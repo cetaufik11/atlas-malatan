@@ -2,7 +2,7 @@ import { useStore } from '../store.js';
 import { TOURS, resolveStops } from '../data/tours.js';
 import { pathLength, fmtDistance, walkMinutes } from '../lib/geo.js';
 import { startTracking } from '../lib/gps.js';
-import { speechSupported } from '../lib/speech.js';
+import { narrationSupported } from '../lib/narration.js';
 import { Icon } from '../components/icons.jsx';
 
 export default function ToursPanel() {
@@ -17,7 +17,7 @@ export default function ToursPanel() {
       const ok = await startTracking();
       if (!ok) return;
     }
-    setTour({ id: t.id, title: t.title, stops, step: 0, mode, playing: true, voice: speechSupported });
+    setTour({ id: t.id, title: t.title, stops, step: 0, mode, playing: true, voice: narrationSupported });
   };
 
   return (

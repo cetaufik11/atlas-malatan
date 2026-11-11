@@ -5,6 +5,7 @@ import { downloadText } from '../lib/storage.js';
 import { bboxOf, fmtArea, polygonArea } from '../lib/geo.js';
 import { SAT_URL, DEM_URL, dataGeoJSON } from '../map/style.js';
 import { STATUSES, CATEGORIES } from '../data/meta.js';
+import { recordingFiles } from '../lib/narration.js';
 import { TrackRecorder, LayerImport, Weather } from '../components/FieldTools.jsx';
 import { Icon } from '../components/icons.jsx';
 
@@ -34,6 +35,8 @@ export default function ToolsPanel() {
     setDl({ done: 0, total: urls.length, failed: 0 });
     try {
       const r = await cacheTiles(urls, (done, total, failed) => setDl({ done, total, failed }), abort.current.signal);
+      // Rekaman narasi: cukup diminta sekali, service worker menyimpannya (cache 'atlas-media').
+      await Promise.all(recordingFiles().map((f) => fetch(f).catch(() => null)));
       setDl({ ...r, total: urls.length, finished: true });
       notify(r.failed ? `Selesai, ${r.failed} ubin gagal. Coba ulangi saat sinyal bagus.` : 'Peta Malatan siap dipakai offline.', r.failed ? 'info' : 'success');
     } catch (e) {

@@ -1,8 +1,8 @@
 import { useEffect, useRef } from 'react';
 import { useStore, mapRef } from '../store.js';
-import { speak, stopSpeaking, speechSupported } from '../lib/speech.js';
+import { narrate, stopNarration, narrationSupported } from '../lib/narration.js';
+import { narrationText } from '../lib/narration-text.js';
 import { distance, bearing, compassLabel, fmtDistance, walkMinutes } from '../lib/geo.js';
-import { STATUSES } from '../data/meta.js';
 import { Icon } from './icons.jsx';
 
 const ARRIVE_M = 25;
@@ -32,7 +32,7 @@ export default function TourHud() {
     select(stop.id);
     clearTimeout(timer.current);
     cancelAnimationFrame(orbit.current);
-    stopSpeaking();
+    stopNarration();
     if (!tour.playing) return;
 
     const map = mapRef.current;
@@ -58,10 +58,10 @@ export default function TourHud() {
         notify('Tur selesai. Terima kasih sudah menjelajah Malatan!');
       } else setTour({ ...t, step: t.step + 1 });
     };
-    const st = STATUSES[stop.status];
-    const text = `Perhentian ${tour.step + 1}. ${stop.name}. ${stop.description}${stop.status === 'legenda' || stop.status === 'draf' ? ` Catatan: status narasi ${st.label}.` : ''}`;
-    if (tour.voice && speechSupported) {
-      timer.current = setTimeout(() => speak(text, { onEnd: () => (timer.current = setTimeout(next, 1500)) }), 2200);
+    const text = narrationText(stop);
+    if (tour.voice && narrationSupported) {
+      // Mulai setelah kamera tiba; rekaman (bila ada) diputar, kalau tidak suara perangkat.
+      timer.current = setTimeout(() => narrate(stop, { intro: `Perhentian ${tour.step + 1}.`, onEnd: () => (timer.current = setTimeout(next, 1500)) }), 2200);
     } else {
       const ms = Math.max(9000, text.split(' ').length * 380);
       timer.current = setTimeout(next, ms);
@@ -70,7 +70,7 @@ export default function TourHud() {
       clearTimeout(t0);
       clearTimeout(timer.current);
       cancelAnimationFrame(orbit.current);
-      stopSpeaking();
+      stopNarration();
     };
   }, [tour?.step, tour?.playing, tour?.voice, tour?.mode, stop?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -98,7 +98,8 @@ export default function TourHud() {
       select(stop.id);
       navigator.vibrate?.([120, 60, 120]);
       notify(`Kamu tiba di ${stop.name}!`, 'success');
-      if (tour.voice) speak(`Kamu tiba di ${stop.name}. ${stop.description}`);
+      // Tunda sebentar: membuka detail situs menghentikan narasi yang sedang berjalan.
+      if (tour.voice) timer.current = setTimeout(() => narrate(stop, { intro: `Kamu tiba di ${stop.name}.` }), 900);
     }
   }, [userPos, stop?.id, tour?.arrived]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -107,7 +108,7 @@ export default function TourHud() {
   const end = () => {
     clearTimeout(timer.current);
     cancelAnimationFrame(orbit.current);
-    stopSpeaking();
+    stopNarration();
     setTour(null);
   };
 
@@ -149,8 +150,8 @@ export default function TourHud() {
           <button type="button" className="icon-btn" onClick={() => go(1)} disabled={tour.step >= tour.stops.length - 1} aria-label="Perhentian berikutnya">
             <Icon name="chevR" />
           </button>
-          {speechSupported && (
-            <button type="button" className={`icon-btn ${tour.voice ? 'on' : ''}`} onClick={() => { stopSpeaking(); patch({ voice: !tour.voice }); }} aria-pressed={tour.voice} aria-label="Narasi suara">
+          {narrationSupported && (
+            <button type="button" className={`icon-btn ${tour.voice ? 'on' : ''}`} onClick={() => { stopNarration(); patch({ voice: !tour.voice }); }} aria-pressed={tour.voice} aria-label="Narasi suara">
               <Icon name="volume" />
             </button>
           )}

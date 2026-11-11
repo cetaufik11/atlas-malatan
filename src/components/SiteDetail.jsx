@@ -4,7 +4,7 @@ import { useStore, flyToSite } from '../store.js';
 import { CATEGORIES, STATUSES, COORD_METHODS, SOURCE_TYPES } from '../data/meta.js';
 import { distance, bearing, compassLabel, fmtDistance, walkMinutes, fmtCoord } from '../lib/geo.js';
 import { elevationAt } from '../lib/elevation.js';
-import { speak, stopSpeaking, speechSupported } from '../lib/speech.js';
+import { narrate, stopNarration, narrationSupported, recordingFor } from '../lib/narration.js';
 import { Icon, SiteIcon } from './icons.jsx';
 import { StatusBadge } from './Badges.jsx';
 import MediaGallery from './MediaGallery.jsx';
@@ -36,7 +36,7 @@ export default function SiteDetail() {
   useEffect(() => {
     setQr(null);
     setDemElev(null);
-    stopSpeaking();
+    stopNarration();
     setReading(false);
     if (!site) return;
     flyToSite(site, { padding: window.innerWidth > 900 ? { right: 420 } : { bottom: window.innerHeight * 0.45 } });
@@ -74,13 +74,12 @@ export default function SiteDetail() {
 
   const read = () => {
     if (reading) {
-      stopSpeaking();
+      stopNarration();
       setReading(false);
       return;
     }
     setReading(true);
-    const st = STATUSES[site.status];
-    speak(`${site.name}. ${site.description} Status narasi: ${st?.label ?? ''}.`, { onEnd: () => setReading(false) });
+    narrate(site, { onEnd: () => setReading(false) });
   };
 
   return (
@@ -125,8 +124,8 @@ export default function SiteDetail() {
         )}
 
         <div className="actions">
-          {speechSupported && (
-            <button type="button" className="btn ghost sm" onClick={read} aria-pressed={reading}>
+          {narrationSupported && (
+            <button type="button" className="btn ghost sm" onClick={read} aria-pressed={reading} title={recordingFor(site) ? 'Narasi rekaman' : 'Dibacakan suara perangkat'}>
               <Icon name={reading ? 'stop' : 'volume'} size={14} /> {reading ? 'Berhenti' : 'Dengarkan'}
             </button>
           )}

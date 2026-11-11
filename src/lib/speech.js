@@ -5,7 +5,14 @@ let voice = null;
 function pickVoice() {
   if (!speechSupported) return null;
   const voices = window.speechSynthesis.getVoices();
-  voice = voices.find((v) => v.lang?.toLowerCase().startsWith('id')) || voices.find((v) => v.lang?.toLowerCase().startsWith('ms')) || null;
+  const id = voices.filter((v) => v.lang?.toLowerCase().startsWith('id'));
+  // Suara 'Natural'/'Online' (Edge) dan 'Google' biasanya jauh lebih enak didengar daripada suara bawaan lama.
+  voice =
+    id.find((v) => /natural|online/i.test(v.name)) ||
+    id.find((v) => /google/i.test(v.name)) ||
+    id[0] ||
+    voices.find((v) => v.lang?.toLowerCase().startsWith('ms')) ||
+    null;
   return voice;
 }
 if (speechSupported) window.speechSynthesis.onvoiceschanged = pickVoice;

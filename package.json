@@ -8,7 +8,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "data:legacy": "node scripts/extract-legacy.mjs ../peta-malatan-satelit.html",
-    "data:imagery": "node scripts/wayback-distinct.mjs 17"
+    "data:imagery": "node scripts/wayback-distinct.mjs 17",
+    "narasi": "node scripts/generate-narration.mjs"
   },
   "dependencies": {
     "idb-keyval": "^6.2.1",

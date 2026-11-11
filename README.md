@@ -29,6 +29,7 @@ Cara memperbaiki (**Alat → Mode admin → Kalibrasi posisi**):
 |---|---|
 | Peta | MapLibre GL, medan 3D (DEM Terrarium), langit & kabut, 4 peta dasar, bayangan relief, batas/jalan/sungai |
 | Mesin waktu | 11 citra satelit berbeda 2014–2026 (Esri Wayback), putar otomatis, geser-bandingkan dua tahun atau dengan Peta Arsip 2018 |
+| Narasi | Rekaman suara alami per situs (Gemini TTS, `npm run narasi`) untuk tombol Dengarkan dan tur; otomatis jatuh ke suara perangkat bila rekaman tidak ada atau teks berubah |
 | Situs | 14 situs, label status narasi (Terverifikasi/Observasi/Tutur/Legenda/Perlu kajian/Draf) terpisah dari status koordinat, filter & cari, narasi suara, QR plang, rute, bagikan tautan `?situs=id` |
 | Arsip | Katalog semua sumber & media lintas situs, galeri foto, pemutar audio + transkrip |
 | Cagar budaya | Legenda Mbah Malat vs temuan arkeologis, catat titik temuan dengan GPS, draf laporan ke dinas, ekspor GeoJSON, ringkasan UU 11/2010 |
@@ -79,6 +80,7 @@ Setelah tahu alamat publiknya, isi `publicUrl` di `src/data/config.js` agar QR p
 | `scripts/extract-legacy.mjs`, `build-data.mjs` | Migrasi data dari peta lama (sudah dijalankan) |
 | `scripts/wayback-distinct.mjs`, `wayback-maxzoom.mjs` | Cari ulang citra historis yang berbeda (jalankan tiap tahun untuk citra baru) |
 | `scripts/check-elev.mjs` | Bandingkan elevasi tercatat vs DEM per situs |
+| `scripts/generate-narration.mjs` | Buat rekaman narasi dengan Gemini TTS (lihat AGENTS.md) |
 | `scripts/smoke-test.mjs` | Uji otomatis alur utama di Chrome (`GPU=1` untuk render 3D asli) |
 | `scripts/analysis-test.mjs` | Uji otomatis fitur analisis, alat lapangan, dan kalibrasi (Chrome dengan GPU) |
 

@@ -1,0 +1,91 @@
+{
+  "model": "gemini-3.8-flash-tts",
+  "voice": "Aoede",
+  "generated": "2026-11-11",
+  "items": {
+    "masjid-jami": {
+      "file": "media/narasi/masjid-jami.mp3",
+      "hash": "c0d27b04",
+      "voice": "Aoede",
+      "seconds": 20
+    },
+    "gkj-sindoro": {
+      "file": "media/narasi/gkj-sindoro.mp3",
+      "hash": "94c6a377",
+      "voice": "Aoede",
+      "seconds": 25
+    },
+    "gedung-kesenian": {
+      "file": "media/narasi/gedung-kesenian.mp3",
+      "hash": "b7fffb75",
+      "voice": "Aoede",
+      "seconds": 23
+    },
+    "tpq-malatan": {
+      "file": "media/narasi/tpq-malatan.mp3",
+      "hash": "3287a0e9",
+      "voice": "Aoede",
+      "seconds": 19
+    },
+    "makam-leluhur": {
+      "file": "media/narasi/makam-leluhur.mp3",
+      "hash": "62b2d123",
+      "voice": "Aoede",
+      "seconds": 33
+    },
+    "posko-kkn": {
+      "file": "media/narasi/posko-kkn.mp3",
+      "hash": "a4fb82e5",
+      "voice": "Aoede",
+      "seconds": 29
+    },
+    "sendang-adat": {
+      "file": "media/narasi/sendang-adat.mp3",
+      "hash": "e465060f",
+      "voice": "Aoede",
+      "seconds": 28
+    },
+    "sentra-tembakau": {
+      "file": "media/narasi/sentra-tembakau.mp3",
+      "hash": "db1d112f",
+      "voice": "Aoede",
+      "seconds": 29
+    },
+    "balai-warga": {
+      "file": "media/narasi/balai-warga.mp3",
+      "hash": "813af667",
+      "voice": "Aoede",
+      "seconds": 22
+    },
+    "masjid-jalan-utama": {
+      "file": "media/narasi/masjid-jalan-utama.mp3",
+      "hash": "a48db6f6",
+      "voice": "Aoede",
+      "seconds": 25
+    },
+    "masjid-timur": {
+      "file": "media/narasi/masjid-timur.mp3",
+      "hash": "5ce5dd75",
+      "voice": "Aoede",
+      "seconds": 24
+    },
+    "jembatan-utara": {
+      "file": "media/narasi/jembatan-utara.mp3",
+      "hash": "0ace5f5e",
+      "voice": "Aoede",
+      "seconds": 26
+    },
+    "jembatan-timur": {
+      "file": "media/narasi/jembatan-timur.mp3",
+      "hash": "a9bd7df7",
+      "voice": "Aoede",
+      "seconds": 21
+    },
+    "jembatan-selatan": {
+      "file": "media/narasi/jembatan-selatan.mp3",
+      "hash": "56670aa6",
+      "voice": "Aoede",
+      "seconds": 23
+    }
+  }
+}

@@ -55,6 +55,28 @@ git add -A && git commit -m "Tambah foto <nama situs>" && git push
 
    Deploy berjalan otomatis ±2 menit setelah push (tab Actions di GitHub).
 
+## Narasi suara (Gemini TTS)
+
+Tombol **Dengarkan** dan tur memutar rekaman di `public/media/narasi/<id-situs>.mp3` bila terdaftar di
+`src/data/narration.json`; kalau tidak ada (atau teks situs sudah berubah), aplikasi memakai suara perangkat.
+
+Membuat / memperbarui rekaman (butuh ffmpeg dan kunci API Gemini):
+
+```bash
+# sekali saja: simpan kunci di .env.local (berkas ini TIDAK ikut ke git)
+echo "GEMINI_API_KEYS=kunci1,kunci2" > .env.local
+
+npm run narasi                      # hanya situs yang teksnya berubah
+npm run narasi -- --voice Charon    # ganti suara: Aoede (bawaan), Kore, Charon, Fenrir, Puck
+npm run narasi -- --only makam-leluhur --force
+npm run narasi -- --dry             # lihat teks yang akan dibacakan, tanpa memanggil API
+```
+
+- **Jangan pernah meng-commit kunci API** ke repo ini (repo publik). Hanya `.env.local`.
+- Setelah mengubah `description`, `name`, atau `status` sebuah situs, jalankan lagi `npm run narasi`
+  supaya rekamannya cocok; lalu commit `public/media/narasi/` dan `src/data/narration.json`.
+- Teks yang dibacakan disusun di `src/lib/narration-text.js` (label legenda/draf ikut dibacakan — jangan dihapus).
+
 ## Peta berkas
 
 | Berkas | Isi |
@@ -65,6 +87,7 @@ git add -A && git commit -m "Tambah foto <nama situs>" && git push
 | `src/components/MediaGallery.jsx` | Tampilan foto/video/audio di detail situs |
 | `src/map/MapView.jsx` | Peta MapLibre (hati-hati, banyak penangkal bug) |
 | `public/media/` | Berkas media |
+| `public/media/narasi/`, `src/data/narration.json` | Rekaman narasi + daftarnya (dibuat `npm run narasi`) |
 
 ## Pengujian
 
