@@ -1,0 +1,5 @@
+node_modules
+dist
+scripts/wayback.json
+scripts/shots
+scripts/legacy.json

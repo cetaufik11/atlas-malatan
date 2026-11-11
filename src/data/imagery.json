@@ -1,0 +1,57 @@
+[
+  {
+    "release": 10,
+    "date": "2014-02-20",
+    "maxzoom": 17
+  },
+  {
+    "release": 31026,
+    "date": "2017-02-27",
+    "maxzoom": 17
+  },
+  {
+    "release": 9598,
+    "date": "2019-05-15",
+    "maxzoom": 17
+  },
+  {
+    "release": 15045,
+    "date": "2020-04-29",
+    "maxzoom": 17
+  },
+  {
+    "release": 9812,
+    "date": "2021-02-24",
+    "maxzoom": 17
+  },
+  {
+    "release": 15423,
+    "date": "2021-05-19",
+    "maxzoom": 17
+  },
+  {
+    "release": 5314,
+    "date": "2022-05-18",
+    "maxzoom": 17
+  },
+  {
+    "release": 13851,
+    "date": "2022-07-21",
+    "maxzoom": 17
+  },
+  {
+    "release": 47963,
+    "date": "2023-06-29",
+    "maxzoom": 18
+  },
+  {
+    "release": 12428,
+    "date": "2024-06-06",
+    "maxzoom": 18
+  },
+  {
+    "release": 10842,
+    "date": "2026-05-28",
+    "maxzoom": 18
+  }
+]

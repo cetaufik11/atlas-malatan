@@ -1,0 +1,498 @@
+[
+  {
+    "id": "masjid-jami",
+    "code": "MLT-01",
+    "name": "Masjid Jami' Al-Muqorobbin Malatan",
+    "subtitle": "Pusat Ibadah Umat Islam & Simpul Harmoni Lintas Iman",
+    "category": "ibadah",
+    "icon": "mosque",
+    "lat": -7.2857466,
+    "lng": 110.011906,
+    "elev": 1248,
+    "coord": "gps",
+    "status": "observasi",
+    "description": "Masjid utama di jantung permukiman Dusun Malatan. Dalam sejarah sosial dusun, renovasi dan perawatan lingkungan masjid ini melibatkan gotong royong (sambatan) seluruh warga tanpa memandang perbedaan agama—menjadi bukti hidup kerukunan di lereng Gunung Sindoro.",
+    "quote": {
+      "text": "Di Malatan, saat masjid sedang dibangun atau ada pengajian akbar, tetangga Kristiani ikut membantu menyiapkan tempat dan menjaga kelancaran acara.",
+      "cite": "Dokumentasi Studi Bina Damai Dusun Malatan (UIN Sunan Kalijaga, 2022)"
+    },
+    "specs": {
+      "Status Koordinat": "GPS Terverifikasi Lapangan",
+      "Koordinat WGS84": "-7.285747, 110.011906",
+      "Elevasi Topografi": "± 1.248 mdpl",
+      "Jarak ke GKJ Sindoro": "± 82,4 meter (1 menit jalan kaki)",
+      "Fungsi Sosial": "Ibadah, Pengajian Akbar & Musyawarah"
+    },
+    "sources": [
+      {
+        "title": "Dokumentasi Studi Bina Damai Dusun Malatan (UIN Sunan Kalijaga, 2022)",
+        "type": "dokumen",
+        "note": ""
+      }
+    ],
+    "media": [],
+    "tags": []
+  },
+  {
+    "id": "gkj-sindoro",
+    "code": "MLT-02",
+    "name": "GKJ Sindoro Pepanthan Malatan",
+    "subtitle": "Gereja Kristen Jawa & Laboratorium Toleransi Desa Bansari",
+    "category": "ibadah",
+    "icon": "church",
+    "lat": -7.2862939,
+    "lng": 110.0124461,
+    "elev": 1244,
+    "coord": "gps",
+    "status": "observasi",
+    "description": "Gereja Kristen Jawa (GKJ) Sindoro Pepanthan Malatan berdiri berdampingan secara damai dengan pemukiman warga Muslim dan hanya berjarak sekitar 82 meter dari Masjid Jami' Al-Muqorobbin. Keberadaannya menjadi objek rujukan akademik nasional tentang harmoni lintas iman pedesaan Jawa.",
+    "quote": {
+      "text": "Satu keluarga berbeda keyakinan adalah hal biasa di Dusun Malatan; saat Natal maupun Idulfitri, pintu rumah setiap warga terbuka untuk saling bersilaturahmi.",
+      "cite": "Arsip Sejarah Lisan & Kajian Sosiologi Agama Dusun Malatan"
+    },
+    "specs": {
+      "Status Koordinat": "GPS Terverifikasi Lapangan",
+      "Koordinat WGS84": "-7.286294, 110.012446",
+      "Elevasi Topografi": "± 1.244 mdpl",
+      "Jarak ke Masjid Jami'": "± 82,4 meter",
+      "Kajian Akademik": "Riset Bina Damai UIN Sunan Kalijaga (2022)"
+    },
+    "sources": [
+      {
+        "title": "Arsip Sejarah Lisan & Kajian Sosiologi Agama Dusun Malatan",
+        "type": "lisan",
+        "note": ""
+      }
+    ],
+    "media": [],
+    "tags": []
+  },
+  {
+    "id": "gedung-kesenian",
+    "code": "MLT-03",
+    "name": "Gedung Kesenian Malatan & Sanggar Turonggo",
+    "subtitle": "Pusat Pentas Jaran Kepang, Merti Dusun & Kesenian Lereng Sindoro",
+    "category": "budaya",
+    "icon": "hall",
+    "lat": -7.2856108,
+    "lng": 110.012473,
+    "elev": 1246,
+    "coord": "gps",
+    "status": "observasi",
+    "description": "Terletak tepat di sisi timur jalan poros utama Dusun Malatan (ditandai simbol gedung kuning pada Peta Desa 2018). Gedung ini menjadi markas latihan tari tradisional Jaran Kepang (Kuda Lumping), Kubro Siswo, pentas Merti Dusun, sekaligus ruang berkumpul warga lintas generasi.",
+    "quote": {
+      "text": "Gamelan dan tarian Jaran Kepang di gedung ini menyatukan seluruh pemuda dusun dalam satu irama kearifan lokal.",
+      "cite": "Catatan Kebudayaan Karang Taruna & Sesepuh Dusun Malatan"
+    },
+    "specs": {
+      "Status Koordinat": "GPS Terverifikasi Lapangan",
+      "Koordinat WGS84": "-7.285611, 110.012473",
+      "Elevasi Topografi": "± 1.246 mdpl",
+      "Kesenian Utama": "Jaran Kepang, Kubro Siswo & Karawitan",
+      "Agenda Tahunan": "Pentas Merti Dusun / Nyadran Malatan"
+    },
+    "sources": [
+      {
+        "title": "Catatan Kebudayaan Karang Taruna & Sesepuh Dusun Malatan",
+        "type": "lisan",
+        "note": ""
+      }
+    ],
+    "media": [],
+    "tags": []
+  },
+  {
+    "id": "tpq-malatan",
+    "code": "MLT-04",
+    "name": "TPQ (Taman Pendidikan Al-Qur'an) Malatan",
+    "subtitle": "Pusat Pendidikan Karakter & Literasi Keagamaan Anak Dusun",
+    "category": "ibadah",
+    "icon": "school",
+    "lat": -7.2862396,
+    "lng": 110.0121011,
+    "elev": 1245,
+    "coord": "gps",
+    "status": "observasi",
+    "description": "Lembaga pendidikan Al-Qur'an sore hari bagi anak-anak Dusun Malatan. Selain pembelajaran baca-tulis Al-Qur'an, TPQ ini juga menjadi mitra aktif mahasiswa KKN UNY dalam kegiatan pendampingan edukasi, dongeng sejarah lokal, dan pembinaan akhlak.",
+    "quote": {
+      "text": "Setiap sore selepas ashar, suara anak-anak mengaji menghidupkan suasana gang-gang Dusun Malatan.",
+      "cite": "Observasi Lapangan Proker Pendidikan KKN UNY 2026"
+    },
+    "specs": {
+      "Status Koordinat": "GPS Terverifikasi Lapangan",
+      "Koordinat WGS84": "-7.286240, 110.012101",
+      "Elevasi Topografi": "± 1.245 mdpl",
+      "Waktu Kegiatan": "Sore Hari (15.30 – 17.00 WIB)",
+      "Sinergi KKN": "Pendampingan Mengaji & Literasi Anak"
+    },
+    "sources": [
+      {
+        "title": "Observasi Lapangan Proker Pendidikan KKN UNY 2026",
+        "type": "observasi",
+        "note": ""
+      }
+    ],
+    "media": [],
+    "tags": []
+  },
+  {
+    "id": "makam-leluhur",
+    "code": "MLT-05",
+    "name": "Makam Leluhur Dusun & Petilasan Mbah Malat",
+    "subtitle": "Situs Cikal Bakal Babad Alas & Lokasi Sakral Tradisi Nyadran",
+    "category": "sejarah",
+    "icon": "tomb",
+    "lat": -7.28552,
+    "lng": 110.01105,
+    "elev": 1258,
+    "coord": "peta-2018",
+    "status": "legenda",
+    "description": "Kompleks pemakaman tua di sabuk atas sisi barat Dusun Malatan (tepat di atas tulisan 'Malatan' pada Peta Arsip 2018). Di tempat inilah bersemayam para leluhur pembuka tanah (babad alas) Dusun Malatan. Setiap bulan Ruwah/Sya'ban, seluruh warga berkumpul menggelar tradisi Nyadran (Sadranan Sarean) dan kenduri bersama.",
+    "quote": {
+      "text": "Nyadran di makam dusun bukan sekadar mendoakan leluhur yang telah tiada, melainkan merawat ikatan paseduluran mereka yang masih hidup.",
+      "cite": "Tutur Lisan Sesepuh Dusun Malatan"
+    },
+    "specs": {
+      "Status Koordinat": "Kalibrasi Peta Geodesi 2018 & Observasi",
+      "Koordinat WGS84": "-7.285520, 110.011050",
+      "Elevasi Topografi": "± 1.258 mdpl (Zona Sabuk Atas)",
+      "Ritus Adat": "Nyadran / Sadranan Sarean & Besik Makam",
+      "Nilai Historis": "Cikal Bakal Permukiman Dusun Malatan"
+    },
+    "sources": [
+      {
+        "title": "Tutur Lisan Sesepuh Dusun Malatan",
+        "type": "lisan",
+        "note": ""
+      }
+    ],
+    "media": [],
+    "tags": []
+  },
+  {
+    "id": "posko-kkn",
+    "code": "MLT-06",
+    "name": "Posko KKN UNY 2026 & Pojok Literasi Sejarah",
+    "subtitle": "Pusat Koordinasi Mahasiswa, Bimbingan Belajar & Digitalisasi Desa",
+    "category": "budaya",
+    "icon": "posko",
+    "lat": -7.28545,
+    "lng": 110.01218,
+    "elev": 1249,
+    "coord": "peta-2018",
+    "status": "draf",
+    "description": "Pusat sekretariat dan koordinasi mahasiswa KKN Universitas Negeri Yogyakarta (UNY) tahun 2026 di Dusun Malatan. Berfungsi sebagai studio penyusunan Peta Digital & Ensiklopedia Babad Malatan, tempat bimbingan belajar malam bagi siswa SD/SMP dusun, serta pos layanan digital warga.",
+    "quote": {
+      "text": "Menghubungkan ingatan sejarah sesepuh dusun dengan teknologi pemetaan digital untuk diwariskan kepada generasi muda Malatan.",
+      "cite": "Program Kerja Individu Pendidikan Sejarah — KKN UNY 2026"
+    },
+    "specs": {
+      "Status Koordinat": "Titik Observasi Lapangan KKN",
+      "Koordinat WGS84": "-7.285450, 110.012180",
+      "Elevasi Topografi": "± 1.249 mdpl",
+      "Program Unggulan": "WebGIS Peta Digital & Portal Sejarah Malatan",
+      "Institusi": "Universitas Negeri Yogyakarta (UNY)"
+    },
+    "sources": [
+      {
+        "title": "Program Kerja Individu Pendidikan Sejarah — KKN UNY 2026",
+        "type": "dokumen",
+        "note": ""
+      }
+    ],
+    "media": [],
+    "tags": []
+  },
+  {
+    "id": "sendang-adat",
+    "code": "MLT-07",
+    "name": "Sendang Tua & Hulu Mata Air Malatan",
+    "subtitle": "Sumber Air Kehidupan Lereng Sindoro & Ritus Merti Sendang",
+    "category": "sejarah",
+    "icon": "spring",
+    "lat": -7.28485,
+    "lng": 110.01085,
+    "elev": 1266,
+    "coord": "peta-2018",
+    "status": "draf",
+    "description": "Titik mata air pegunungan di alur sungai utara Dusun Malatan yang berhulu langsung dari lereng Gunung Sindoro. Sejak masa awal pembukaan dusun, sumber air ini menopang kebutuhan domestik warga dan irigasi lahan hortikultura, serta dijaga kelestariannya melalui adat Merti Sendang.",
+    "quote": {
+      "text": "Air yang mengalir jernih dari lereng Sindoro adalah berkah yang wajib dijaga dengan merawat pepohonan di hulunya.",
+      "cite": "Kearifan Ekologi Warga Lereng Gunung Sindoro"
+    },
+    "specs": {
+      "Status Koordinat": "Kalibrasi Hidrologi Peta 2018",
+      "Koordinat WGS84": "-7.284850, 110.010850",
+      "Elevasi Topografi": "± 1.266 mdpl",
+      "Sistem Hidrologi": "Sub-DAS Lereng Timur Gunung Sindoro",
+      "Tradisi Terkait": "Merti Sendang & Konservasi Hulu Air"
+    },
+    "sources": [
+      {
+        "title": "Kearifan Ekologi Warga Lereng Gunung Sindoro",
+        "type": "dokumen",
+        "note": ""
+      }
+    ],
+    "media": [],
+    "tags": []
+  },
+  {
+    "id": "sentra-tembakau",
+    "code": "MLT-08",
+    "name": "Pelataran Rigen & Sentra Tembakau Lembutan",
+    "subtitle": "Kawasan Pengolahan 'Emas Hijau' & Perajangan Gobang Tradisional",
+    "category": "agraris",
+    "icon": "tobacco",
+    "lat": -7.28518,
+    "lng": 110.01275,
+    "elev": 1247,
+    "coord": "peta-2018",
+    "status": "draf",
+    "description": "Kawasan pelataran warga dan lahan terbuka di Dusun Malatan yang setiap musim kemarau (Agustus–Oktober) berubah menjadi hamparan rigen bambu tempat penjemuran Tembakau Lembutan khas Bansari. Daun tembakau dirajang halus menggunakan gobang tradisional setelah melalui doa Wiwitan dan Jamasan Gobang.",
+    "quote": {
+      "text": "Tembakau Bansari dari lereng Sindoro dikenal memiliki serat halus dan aroma madu alami berkat kabut pagi dan sinar matahari pegunungan.",
+      "cite": "Catatan Agraris Petani Tembakau Dusun Malatan"
+    },
+    "specs": {
+      "Status Koordinat": "Titik Survei Kawasan Agraris",
+      "Koordinat WGS84": "-7.285180, 110.012750",
+      "Elevasi Topografi": "± 1.247 mdpl",
+      "Komoditas Utama": "Tembakau Lembutan, Kopi Arabika & Hortikultura",
+      "Alat Tradisional": "Gobang (Pisau Rajang), Rigen Bambu & Keranjang"
+    },
+    "sources": [
+      {
+        "title": "Catatan Agraris Petani Tembakau Dusun Malatan",
+        "type": "dokumen",
+        "note": ""
+      }
+    ],
+    "media": [],
+    "tags": []
+  },
+  {
+    "id": "balai-warga",
+    "code": "MLT-09",
+    "name": "Balai Pertemuan Warga & Posyandu Dusun",
+    "subtitle": "Simpul Rembug Warga RT/RW, PKK, Dasawisma & Layanan Kesehatan",
+    "category": "budaya",
+    "icon": "hall",
+    "lat": -7.28568,
+    "lng": 110.01222,
+    "elev": 1247,
+    "coord": "peta-2018",
+    "status": "draf",
+    "description": "Ruang publik komunal tempat warga Dusun Malatan menyelenggarakan musyawarah RT/RW, arisan PKK, kegiatan Posyandu balita dan lansia, serta sosialisasi program kerja mahasiswa KKN bersama perangkat dusun.",
+    "quote": {
+      "text": "Segala urusan dusun diselesaikan dengan duduk melingkar, minum teh hangat, dan rembug mufakat.",
+      "cite": "Tradisi Demokrasi Pedesaan Dusun Malatan"
+    },
+    "specs": {
+      "Status Koordinat": "Titik Observasi Fasilitas Dusun",
+      "Koordinat WGS84": "-7.285680, 110.012220",
+      "Elevasi Topografi": "± 1.247 mdpl",
+      "Fungsi Rutin": "Musyawarah Dusun, PKK & Posyandu",
+      "Cakupan Layanan": "Seluruh RT/RW Dusun Malatan"
+    },
+    "sources": [
+      {
+        "title": "Tradisi Demokrasi Pedesaan Dusun Malatan",
+        "type": "dokumen",
+        "note": ""
+      }
+    ],
+    "media": [],
+    "tags": []
+  },
+  {
+    "id": "masjid-jalan-utama",
+    "code": "MLT-10",
+    "name": "Mushola / Masjid Koridor Jalan Utama",
+    "subtitle": "Fasilitas Ibadah Warga di Jalur Poros Dusun Malatan",
+    "category": "ibadah",
+    "icon": "mosque",
+    "lat": -7.28588,
+    "lng": 110.01262,
+    "elev": 1245,
+    "coord": "peta-2018",
+    "status": "draf",
+    "description": "Tempat ibadah warga yang berada tepat di koridor jalan poros utama Dusun Malatan (tercatat sebagai simbol bulan sabit hijau di sisi timur jalan merah pada Peta Desa Bansari 2018). Memudahkan warga sekitar dan pelintas jalur desa untuk menunaikan salat berjamaah.",
+    "quote": {
+      "text": "Keberadaan mushola di sepanjang jalur dusun mencerminkan hidupnya tradisi jamaah dan pengajian rutin warga.",
+      "cite": "Pemetaan Sosial Keagamaan Dusun Malatan"
+    },
+    "specs": {
+      "Status Koordinat": "Kalibrasi Peta Geodesi 2018",
+      "Koordinat WGS84": "-7.285880, 110.012620",
+      "Elevasi Topografi": "± 1.245 mdpl",
+      "Posisi Spasial": "Koridor Jalan Utama Dusun Malatan",
+      "Sumber Peta": "Peta Desa Bansari 2018 (KKN Undip)"
+    },
+    "sources": [
+      {
+        "title": "Pemetaan Sosial Keagamaan Dusun Malatan",
+        "type": "observasi",
+        "note": ""
+      },
+      {
+        "title": "Peta Desa Bansari 2018 (KKN Undip)",
+        "type": "peta",
+        "note": "Sumber posisi koordinat"
+      }
+    ],
+    "media": [],
+    "tags": []
+  },
+  {
+    "id": "masjid-timur",
+    "code": "MLT-11",
+    "name": "Mushola / Masjid Permukiman Sisi Timur",
+    "subtitle": "Fasilitas Ibadah Warga Kawasan Timur Dusun Malatan",
+    "category": "ibadah",
+    "icon": "mosque",
+    "lat": -7.28575,
+    "lng": 110.01342,
+    "elev": 1238,
+    "coord": "peta-2018",
+    "status": "draf",
+    "description": "Tempat ibadah yang melayani keluarga di sayap permukiman timur Dusun Malatan menjelang batas jembatan timur (tercatat pada Peta Desa Bansari 2018). Menjadi pusat kegiatan Yasinan, tahlilan, dan tadarus warga RT sisi timur.",
+    "quote": {
+      "text": "Setiap sudut permukiman memiliki ruang ibadah yang dirawat secara swadaya oleh warga rukun tetangga.",
+      "cite": "Dokumentasi Spasial KKN UNY 2026"
+    },
+    "specs": {
+      "Status Koordinat": "Kalibrasi Peta Geodesi 2018",
+      "Koordinat WGS84": "-7.285750, 110.013420",
+      "Elevasi Topografi": "± 1.238 mdpl",
+      "Posisi Spasial": "Sayap Timur Dusun Malatan",
+      "Sumber Peta": "Peta Desa Bansari 2018 (KKN Undip)"
+    },
+    "sources": [
+      {
+        "title": "Dokumentasi Spasial KKN UNY 2026",
+        "type": "observasi",
+        "note": ""
+      },
+      {
+        "title": "Peta Desa Bansari 2018 (KKN Undip)",
+        "type": "peta",
+        "note": "Sumber posisi koordinat"
+      }
+    ],
+    "media": [],
+    "tags": []
+  },
+  {
+    "id": "jembatan-utara",
+    "code": "MLT-12",
+    "name": "Jembatan Utara & Pos Gerbang Atas Malatan",
+    "subtitle": "Batas Geografis Utara Dusun Malatan menuju Hulu Sindoro",
+    "category": "agraris",
+    "icon": "bridge",
+    "lat": -7.28452,
+    "lng": 110.01195,
+    "elev": 1256,
+    "coord": "peta-2018",
+    "status": "draf",
+    "description": "Titik penyeberangan jalan poros utama di atas alur sungai batas utara Dusun Malatan, berdekatan dengan pos ronda/gardu batas utara (tercatat jelas pada Peta Desa Bansari 2018). Merupakan akses utama petani menuju ladang atas dan kawasan Embung Bansari.",
+    "quote": {
+      "text": "Jembatan utara menjadi gerbang perlintasan para petani saat berangkat menyongsong kabut pagi menuju ladang lereng Sindoro.",
+      "cite": "Observasi Lanskap Geografis Dusun Malatan"
+    },
+    "specs": {
+      "Status Koordinat": "Kalibrasi Peta Geodesi 2018",
+      "Koordinat WGS84": "-7.284520, 110.011950",
+      "Elevasi Topografi": "± 1.256 mdpl",
+      "Fungsi Infrastruktur": "Batas Utara & Akses Lahan Atas",
+      "Fitur Pendamping": "Alur Kali Utara & Gardu Jaga"
+    },
+    "sources": [
+      {
+        "title": "Observasi Lanskap Geografis Dusun Malatan",
+        "type": "observasi",
+        "note": ""
+      }
+    ],
+    "media": [],
+    "tags": []
+  },
+  {
+    "id": "jembatan-timur",
+    "code": "MLT-13",
+    "name": "Jembatan Timur Dusun Malatan",
+    "subtitle": "Simpul Konektivitas Sayap Timur & Aliran Sungai Hilir",
+    "category": "agraris",
+    "icon": "bridge",
+    "lat": -7.28562,
+    "lng": 110.01385,
+    "elev": 1235,
+    "coord": "peta-2018",
+    "status": "draf",
+    "description": "Jembatan penghubung di ujung timur poligon wilayah Dusun Malatan yang melintasi pertemuan alur sungai desa. Menjadi titik batas administratif timur sekaligus jalur distribusi hasil panen pertanian warga.",
+    "quote": {
+      "text": "Menghubungkan denyut ekonomi rumah tangga Dusun Malatan dengan jaringan jalan desa di sisi timur.",
+      "cite": "Survei Infrastruktur Pedesaan KKN UNY 2026"
+    },
+    "specs": {
+      "Status Koordinat": "Kalibrasi Peta Geodesi 2018",
+      "Koordinat WGS84": "-7.285620, 110.013850",
+      "Elevasi Topografi": "± 1.235 mdpl",
+      "Fungsi Infrastruktur": "Batas Timur & Jalur Distribusi Tani",
+      "Sumber Peta": "Peta Desa Bansari 2018 (KKN Undip)"
+    },
+    "sources": [
+      {
+        "title": "Survei Infrastruktur Pedesaan KKN UNY 2026",
+        "type": "observasi",
+        "note": ""
+      },
+      {
+        "title": "Peta Desa Bansari 2018 (KKN Undip)",
+        "type": "peta",
+        "note": "Sumber posisi koordinat"
+      }
+    ],
+    "media": [],
+    "tags": []
+  },
+  {
+    "id": "jembatan-selatan",
+    "code": "MLT-14",
+    "name": "Jembatan Selatan (Batas Dusun Pringapus)",
+    "subtitle": "Gerbang Selatan Dusun Malatan & Batas Alur Sungai Pringapus",
+    "category": "agraris",
+    "icon": "bridge",
+    "lat": -7.28668,
+    "lng": 110.01272,
+    "elev": 1240,
+    "coord": "peta-2018",
+    "status": "draf",
+    "description": "Jembatan pada jalan poros merah yang melintasi sungai pembatas antara Dusun Malatan (di utara) dan Dusun Pringapus (di selatan), sebagaimana tergambar secara presisi pada Peta Desa Bansari 2018.",
+    "quote": {
+      "text": "Sungai kecil dan jembatan selatan menjadi penanda batas alam yang rukun antara warga Dusun Malatan dan Dusun Pringapus.",
+      "cite": "Monografi Spasial Desa Bansari"
+    },
+    "specs": {
+      "Status Koordinat": "Kalibrasi Peta Geodesi 2018",
+      "Koordinat WGS84": "-7.286680, 110.012720",
+      "Elevasi Topografi": "± 1.240 mdpl",
+      "Batas Wilayah": "Berbatasan langsung dengan Dusun Pringapus",
+      "Sumber Peta": "Peta Desa Bansari 2018 (KKN Undip)"
+    },
+    "sources": [
+      {
+        "title": "Monografi Spasial Desa Bansari",
+        "type": "dokumen",
+        "note": ""
+      },
+      {
+        "title": "Peta Desa Bansari 2018 (KKN Undip)",
+        "type": "peta",
+        "note": "Sumber posisi koordinat"
+      }
+    ],
+    "media": [],
+    "tags": []
+  }
+]

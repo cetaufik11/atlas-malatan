@@ -1,0 +1,45 @@
+{
+  "intro": "Bagian ini membedakan dengan tegas antara kisah tutur tinular (legenda) dan temuan fisik di lapangan, sesuai kaidah historiografi. Semua isinya belum melalui kajian ahli cagar budaya.",
+  "legends": [
+    {
+      "id": "mbah-nyai-malat",
+      "title": "Kisah Mbah Malat & Nyai Malat",
+      "status": "legenda",
+      "summary": "Menurut tutur tinular yang berkembang di kalangan warga, nama Dusun Malatan tidak lepas dari kisah Mbah Malat dan Nyai Malat yang dipercaya sebagai cikal bakal wilayah ini. Kisah ini diwariskan secara lisan dan belum memiliki catatan tertulis sezaman.",
+      "traces": "Sebuah makam yang diyakini sebagai petilasan Mbah Malat. Sebagian warga juga mengaku pernah \"dimimpikan\" oleh sosok yang dikaitkan dengan leluhur tersebut, sebuah kepercayaan lokal yang lazim di situs petilasan pedesaan Jawa.",
+      "siteId": "makam-leluhur",
+      "source": "Tutur Bpk. Turatman, Kepala Dusun Malatan (2026)"
+    }
+  ],
+  "finds": [
+    {
+      "id": "lumpang-umpak",
+      "title": "Lumpang & Umpak Batu",
+      "status": "perlu-kajian",
+      "condition": "Masih di lokasi",
+      "summary": "Lumpang dan umpak batu ditemukan di pinggir sungai wilayah Dusun Malatan, diduga sisa struktur bangunan kuno. Berpotensi menjadi cagar budaya yang perlu didata resmi.",
+      "location": null,
+      "locationNote": "Pinggir sungai, koordinat belum disurvei. Gunakan tombol \"Catat titik temuan\" saat berada di lokasi.",
+      "source": "Tutur Bpk. Turatman, Kepala Dusun Malatan (2026)"
+    },
+    {
+      "id": "struktur-candi",
+      "title": "Struktur Diduga Candi",
+      "status": "perlu-kajian",
+      "condition": "Tidak di lokasi — diambil seorang warga untuk \"diamankan\", identitas tidak diketahui",
+      "summary": "Warga pernah menemukan struktur yang diduga candi di kawasan ini. Benda tersebut kemudian diambil oleh seorang warga untuk diamankan secara pribadi; hingga kini identitasnya tidak diketahui, termasuk oleh Kepala Dusun. Catatan ini tidak menuduh siapa pun; siapa pun yang mengetahui keberadaannya diimbau melapor ke perangkat dusun demi pelestarian bersama.",
+      "location": null,
+      "locationNote": "Lokasi temuan awal belum dipetakan.",
+      "source": "Tutur Bpk. Turatman, Kepala Dusun Malatan (2026)"
+    }
+  ],
+  "law": {
+    "title": "Mengapa perlu dilaporkan?",
+    "points": [
+      "UU No. 11 Tahun 2010 tentang Cagar Budaya meminta setiap orang yang menemukan benda yang diduga cagar budaya untuk melaporkannya ke instansi berwenang paling lambat 30 hari sejak ditemukan.",
+      "Benda yang dilaporkan akan dikaji oleh Tim Ahli Cagar Budaya. Penemu yang melapor dapat memperoleh kompensasi; pelaporan bukan berarti benda disita secara sepihak.",
+      "Instansi terkait: Dinas Kebudayaan/Dinas Pendidikan & Kebudayaan Kabupaten Temanggung dan Balai Pelestarian Kebudayaan (BPK) Wilayah X Jawa Tengah."
+    ],
+    "disclaimer": "Ringkasan ini untuk edukasi, bukan nasihat hukum. Rujuk teks undang-undang dan instansi terkait untuk kepastian."
+  }
+}
