@@ -186,6 +186,7 @@ export function flyToSite(site, opts = {}) {
     bearing: opts.bearing ?? map.getBearing(),
     duration: reduce ? 0 : opts.duration ?? 2200,
     essential: true,
-    padding: opts.padding,
+    // Jangan kirim `padding: undefined`: MapLibre akan mencoba membaca padding.top lalu gagal.
+    ...(opts.padding ? { padding: opts.padding } : {}),
   });
 }
