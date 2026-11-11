@@ -1,6 +1,5 @@
 // Gaya peta MapLibre: semua peta dasar dimuat sekaligus, lalu ditampilkan/disembunyikan
 // lewat visibilitas. Dengan begitu lapisan data tidak hilang saat ganti peta dasar.
-import geo from '../data/geo.json';
 
 export const DEM_URL = 'https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png';
 export const SAT_URL = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
@@ -16,7 +15,7 @@ export const BASEMAPS = {
 
 const line = (coords) => ({ type: 'Feature', properties: {}, geometry: { type: 'LineString', coordinates: coords } });
 
-export function dataGeoJSON() {
+export function dataGeoJSON(geo) {
   const ring = [...geo.boundary, geo.boundary[0]];
   return {
     boundary: { type: 'Feature', properties: { name: 'Dusun Malatan' }, geometry: { type: 'Polygon', coordinates: [ring] } },
@@ -33,24 +32,32 @@ export function dataGeoJSON() {
 
 const empty = { type: 'FeatureCollection', features: [] };
 
-export function buildStyle({ basemap, imagery }) {
-  const d = dataGeoJSON();
-  const ab = geo.archiveBounds;
+// Langit & kabut atmosfer untuk tampilan 3D miring (siang). Dipakai ulang oleh simulasi matahari.
+export const SKY = {
+  day: { 'sky-color': '#9cc3e4', 'horizon-color': '#f1e3c8', 'fog-color': '#e8dcc6' },
+  golden: { 'sky-color': '#5d7fae', 'horizon-color': '#f4a261', 'fog-color': '#e9b88a' },
+  night: { 'sky-color': '#070b1c', 'horizon-color': '#1a2242', 'fog-color': '#121830' },
+};
+export const skyFor = (mode) => ({
+  ...SKY[mode],
+  'sky-horizon-blend': 0.6,
+  'horizon-fog-blend': 0.7,
+  'fog-ground-blend': 0.85,
+  'atmosphere-blend': ['interpolate', ['linear'], ['zoom'], 10, 1, 17, 0.6],
+});
+
+export function buildStyle({ basemap, imagery, geo, contourTiles, archiveTiles, terrain }) {
+  const d = dataGeoJSON(geo);
   const vis = (id) => (BASEMAPS[basemap]?.layers.includes(id) ? 'visible' : 'none');
   return {
     version: 8,
     glyphs: 'https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf',
-    // Langit & kabut atmosfer untuk tampilan 3D miring.
-    sky: {
-      'sky-color': '#9cc3e4',
-      'horizon-color': '#f1e3c8',
-      'fog-color': '#e8dcc6',
-      'sky-horizon-blend': 0.6,
-      'horizon-fog-blend': 0.7,
-      'fog-ground-blend': 0.85,
-      'atmosphere-blend': ['interpolate', ['linear'], ['zoom'], 10, 1, 17, 0.6],
-    },
+    sky: skyFor('day'),
+    // Medan disertakan sejak awal (bukan lewat setTerrain belakangan) dan sumber DEM ditaruh
+    // paling atas, supaya ubin elevasi diminta lebih dulu daripada ratusan ubin citra.
+    ...(terrain ? { terrain: { source: 'dem', exaggeration: terrain } } : {}),
     sources: {
+      dem: { type: 'raster-dem', tiles: [DEM_URL], tileSize: 256, maxzoom: 15, encoding: 'terrarium', attribution: 'Elevasi: Mapzen Terrain Tiles (AWS Open Data)' },
       // Esri hanya punya z≤18 di Malatan; di atasnya MapLibre memperbesar z18.
       sat: { type: 'raster', tiles: [SAT_URL], tileSize: 256, maxzoom: 18, attribution: 'Citra © Esri, Maxar, Earthstar Geographics' },
       topo: {
@@ -86,19 +93,20 @@ export function buildStyle({ basemap, imagery }) {
           { type: 'raster', tiles: [waybackUrl(im.release)], tileSize: 256, maxzoom: im.maxzoom ?? 17, attribution: 'Arsip citra: Esri World Imagery Wayback' },
         ]),
       ),
-      dem: { type: 'raster-dem', tiles: [DEM_URL], tileSize: 256, maxzoom: 15, encoding: 'terrarium', attribution: 'Elevasi: Mapzen Terrain Tiles (AWS Open Data)' },
       hillshadeDem: { type: 'raster-dem', tiles: [DEM_URL], tileSize: 256, maxzoom: 15, encoding: 'terrarium' },
-      archive2018: {
-        type: 'image',
-        url: 'media/peta-arsip-2018.jpg',
-        coordinates: [[ab.west, ab.north], [ab.east, ab.north], [ab.east, ab.south], [ab.west, ab.south]],
-      },
+      // Peta arsip disajikan sebagai ubin (lihat archiveTiles.js) agar tidak terpotong di medan 3D.
+      archive2018: { type: 'raster', tiles: [archiveTiles], tileSize: 256, minzoom: 11, maxzoom: 18, attribution: 'Peta arsip: KKN Undip Teknik Geodesi 2018' },
       boundary: { type: 'geojson', data: d.boundary },
       roads: { type: 'geojson', data: d.roads },
       rivers: { type: 'geojson', data: d.rivers },
       measure: { type: 'geojson', data: empty },
       tourPath: { type: 'geojson', data: empty },
       fieldPoints: { type: 'geojson', data: empty },
+      tracks: { type: 'geojson', data: empty },
+      imports: { type: 'geojson', data: empty },
+      pick: { type: 'geojson', data: empty },
+      // Garis kontur dibangkitkan di browser dari DEM (maplibre-contour).
+      ...(contourTiles ? { contours: { type: 'vector', tiles: [contourTiles], maxzoom: 15 } } : {}),
     },
     layers: [
       { id: 'bg', type: 'background', paint: { 'background-color': '#c9d3cf' } },
@@ -118,9 +126,36 @@ export function buildStyle({ basemap, imagery }) {
         type: 'hillshade',
         source: 'hillshadeDem',
         layout: { visibility: 'none' },
-        paint: { 'hillshade-exaggeration': 0.55, 'hillshade-shadow-color': '#2b2016', 'hillshade-highlight-color': '#fff7e6' },
+        paint: { 'hillshade-illumination-anchor': 'map', 'hillshade-exaggeration': 0.55, 'hillshade-shadow-color': '#2b2016', 'hillshade-highlight-color': '#fff7e6' },
       },
       { id: 'archive2018', type: 'raster', source: 'archive2018', layout: { visibility: 'none' }, paint: { 'raster-opacity': 0.75 } },
+      ...(contourTiles
+        ? [
+            {
+              id: 'contours',
+              type: 'line',
+              source: 'contours',
+              'source-layer': 'contours',
+              layout: { visibility: 'none', 'line-join': 'round' },
+              paint: { 'line-color': '#ffe9b8', 'line-opacity': 0.8, 'line-width': ['match', ['get', 'level'], 1, 1.5, 0.6] },
+            },
+            {
+              id: 'contour-labels',
+              type: 'symbol',
+              source: 'contours',
+              'source-layer': 'contours',
+              filter: ['>', ['get', 'level'], 0],
+              layout: {
+                visibility: 'none',
+                'symbol-placement': 'line',
+                'text-size': 10.5,
+                'text-field': ['concat', ['number-format', ['get', 'ele'], {}], ' m'],
+                'text-font': ['Open Sans Semibold'],
+              },
+              paint: { 'text-color': '#fff', 'text-halo-color': '#1d1a16', 'text-halo-width': 1.3 },
+            },
+          ]
+        : []),
       { id: 'labels', type: 'raster', source: 'labels', layout: { visibility: basemap === 'satelit' ? 'visible' : 'none' }, paint: { 'raster-opacity': 0.85 } },
       { id: 'boundary-fill', type: 'fill', source: 'boundary', paint: { 'fill-color': '#c8673f', 'fill-opacity': 0.07 } },
       { id: 'boundary-glow', type: 'line', source: 'boundary', paint: { 'line-color': '#1d1a16', 'line-width': 6, 'line-opacity': 0.35, 'line-blur': 3 } },
@@ -143,6 +178,12 @@ export function buildStyle({ basemap, imagery }) {
           'line-width': ['interpolate', ['linear'], ['zoom'], 15, 1.5, 19, ['match', ['get', 'kind'], 'utama', 7, 4]],
         },
       },
+      { id: 'imports-fill', type: 'fill', source: 'imports', filter: ['==', ['geometry-type'], 'Polygon'], paint: { 'fill-color': ['get', '_color'], 'fill-opacity': 0.18 } },
+      { id: 'imports-line', type: 'line', source: 'imports', filter: ['!=', ['geometry-type'], 'Point'], layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': ['get', '_color'], 'line-width': 3 } },
+      { id: 'imports-pt', type: 'circle', source: 'imports', filter: ['==', ['geometry-type'], 'Point'], paint: { 'circle-radius': 6, 'circle-color': ['get', '_color'], 'circle-stroke-color': '#fff', 'circle-stroke-width': 2 } },
+      { id: 'tracks-casing', type: 'line', source: 'tracks', layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': '#fff', 'line-width': 6, 'line-opacity': 0.7 } },
+      { id: 'tracks-line', type: 'line', source: 'tracks', layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': ['case', ['get', 'live'], '#e23c3c', '#2b7cff'], 'line-width': 3.5 } },
+      { id: 'pick-pt', type: 'circle', source: 'pick', paint: { 'circle-radius': 8, 'circle-color': '#40e0d0', 'circle-stroke-color': '#1d1a16', 'circle-stroke-width': 3 } },
       { id: 'tour-path', type: 'line', source: 'tourPath', layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': '#ffb347', 'line-width': 4, 'line-dasharray': [1, 1.5] } },
       { id: 'measure-fill', type: 'fill', source: 'measure', filter: ['==', ['geometry-type'], 'Polygon'], paint: { 'fill-color': '#ffb347', 'fill-opacity': 0.2 } },
       { id: 'measure-line', type: 'line', source: 'measure', filter: ['!=', ['geometry-type'], 'Point'], paint: { 'line-color': '#ffb347', 'line-width': 3 } },

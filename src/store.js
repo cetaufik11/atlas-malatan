@@ -2,7 +2,21 @@ import { useMemo } from 'react';
 import { create } from 'zustand';
 import baseSites from './data/sites.json';
 import imagery from './data/imagery.json';
+import baseGeoRaw from './data/geo.json';
 import { localPref, setLocalPref } from './lib/storage.js';
+
+/** geo.json → bentuk yang dipakai aplikasi (peta arsip disimpan sebagai 4 sudut agar bisa dikalibrasi). */
+export function normalizeGeo(g) {
+  const ab = g.archiveBounds;
+  return {
+    boundary: g.boundary,
+    mainRoad: g.mainRoad,
+    streets: g.streets,
+    rivers: g.rivers,
+    archiveCoords: g.archiveCoords || [[ab.west, ab.north], [ab.east, ab.north], [ab.east, ab.south], [ab.west, ab.south]],
+  };
+}
+export const baseGeo = normalizeGeo(baseGeoRaw);
 
 // Peta MapLibre disimpan di luar state agar tidak memicu render ulang.
 export const mapRef = { current: null };
@@ -14,6 +28,11 @@ export const useStore = create((set, get) => ({
   sites: baseSites,
   sitesEdited: false,
   setSites: (sites, edited = true) => set({ sites, sitesEdited: edited }),
+
+  // Batas, jalan, sungai, posisi peta arsip (bisa dikalibrasi admin).
+  geo: baseGeo,
+  geoEdited: false,
+  setGeo: (geo, edited = true) => set({ geo, geoEdited: edited }),
 
   selectedId: null,
   select: (id) => {
@@ -56,6 +75,8 @@ export const useStore = create((set, get) => ({
     labels: true,
     archive2018: false,
     fieldPoints: true,
+    tracks: true,
+    imports: true,
   },
   toggleLayer: (k) => set((s) => ({ layers: { ...s.layers, [k]: !s.layers[k] } })),
   archiveOpacity: 0.75,
@@ -78,6 +99,27 @@ export const useStore = create((set, get) => ({
   undoMeasurePt: () => set((s) => ({ measurePts: s.measurePts.slice(0, -1) })),
   clearMeasure: () => set({ measurePts: [] }),
   quizClick: null,
+  pickedPoint: null, // titik yang diketuk saat tool = 'viewshed'
+
+  // ---- Analisis ----
+  overlay: null, // { kind, url, coordinates, ... } gambar hasil analisis di atas peta
+  setOverlay: (overlay) => set({ overlay }),
+  overlayOpacity: 0.7,
+  setOverlayOpacity: (overlayOpacity) => set({ overlayOpacity }),
+  sun: { on: false, date: new Date().toISOString().slice(0, 10), hour: 9 },
+  setSun: (patch) => set((s) => ({ sun: { ...s.sun, ...patch } })),
+
+  // ---- Lapangan: jejak GPS & lapisan impor ----
+  tracks: [],
+  setTracks: (tracks) => set({ tracks }),
+  recording: null, // { started, points: [{lng,lat,ele,t,acc}] }
+  setRecording: (recording) => set({ recording }),
+  imports: [],
+  setImports: (imports) => set({ imports }),
+
+  // ---- Kalibrasi peta arsip (seret sudut) ----
+  calibrating: false,
+  setCalibrating: (calibrating) => set({ calibrating }),
 
   // ---- Lokasi pengguna (GPS) ----
   userPos: null, // { lng, lat, acc, heading }

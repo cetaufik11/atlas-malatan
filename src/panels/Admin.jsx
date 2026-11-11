@@ -9,6 +9,7 @@ import { db, downloadText, readJsonFile, fileToDataUrl } from '../lib/storage.js
 import { Icon } from '../components/icons.jsx';
 import { getOnePosition } from '../lib/gps.js';
 import { elevationAt } from '../lib/elevation.js';
+import Calibration from './Calibration.jsx';
 
 const ICONS = ['mosque', 'church', 'hall', 'school', 'tomb', 'posko', 'spring', 'tobacco', 'bridge', 'find'];
 const slug = (s) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40);
@@ -137,6 +138,7 @@ export default function Admin({ onClose }) {
           </div>
           <div className="row">
             <button type="button" className={`btn ghost sm ${view === 'situs' ? 'on' : ''}`} onClick={() => setView('situs')}>Situs</button>
+            <button type="button" className={`btn ghost sm ${view === 'kalibrasi' ? 'on' : ''}`} onClick={() => setView('kalibrasi')}>Kalibrasi posisi</button>
             <button type="button" className={`btn ghost sm ${view === 'inbox' ? 'on' : ''}`} onClick={() => setView('inbox')}>Kiriman warga {inbox.length > 0 && `(${inbox.length})`}</button>
             <button type="button" className="icon-btn" onClick={onClose} aria-label="Tutup admin"><Icon name="close" /></button>
           </div>
@@ -172,6 +174,8 @@ export default function Admin({ onClose }) {
             </section>
           </div>
         )}
+
+        {view === 'kalibrasi' && <Calibration onClose={onClose} />}
 
         {view === 'inbox' && (
           <div className="admin-inbox">

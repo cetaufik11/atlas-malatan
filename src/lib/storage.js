@@ -32,6 +32,19 @@ export const db = {
     try { await del('siteOverrides'); } catch { /* abaikan */ }
   },
 
+  // Suntingan geometri (batas, jalan, sungai, posisi peta arsip).
+  geoOverrides: () => safeGet('geoOverrides', null),
+  saveGeoOverrides: (geo) => safeSet('geoOverrides', geo),
+  clearGeoOverrides: async () => {
+    try { await del('geoOverrides'); } catch { /* abaikan */ }
+  },
+
+  // Jejak GPS & lapisan impor.
+  tracks: () => safeGet('tracks', []),
+  saveTracks: (list) => safeSet('tracks', list),
+  imports: () => safeGet('imports', []),
+  saveImports: (list) => safeSet('imports', list),
+
   // Titik temuan lapangan (GPS).
   fieldPoints: () => safeGet('fieldPoints', []),
   saveFieldPoints: (list) => safeSet('fieldPoints', list),

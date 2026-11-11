@@ -1,4 +1,4 @@
-import { useEffect, lazy, Suspense, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useStore, flyToSite } from './store.js';
 import { db } from './lib/storage.js';
 import MapView from './map/MapView.jsx';
@@ -15,15 +15,18 @@ import ToursPanel from './panels/ToursPanel.jsx';
 import LearnPanel from './panels/LearnPanel.jsx';
 import ContributePanel from './panels/ContributePanel.jsx';
 import ToolsPanel from './panels/ToolsPanel.jsx';
+import AnalysisPanel from './panels/AnalysisPanel.jsx';
+import CalibrateHud from './components/CalibrateHud.jsx';
 import MeasureHud from './components/MeasureHud.jsx';
 import TourHud from './components/TourHud.jsx';
 
-const Admin = lazy(() => import('./panels/Admin.jsx'));
+import Admin from './panels/Admin.jsx';
 
 const TABS = [
   { id: 'situs', label: 'Situs', icon: 'pin', Panel: SitesPanel },
   { id: 'arsip', label: 'Arsip', icon: 'archive', Panel: ArchivePanel },
   { id: 'cagar', label: 'Cagar Budaya', icon: 'shield', Panel: HeritagePanel },
+  { id: 'analisis', label: 'Analisis', icon: 'mountain', Panel: AnalysisPanel },
   { id: 'tur', label: 'Tur', icon: 'route', Panel: ToursPanel },
   { id: 'belajar', label: 'Belajar', icon: 'school', Panel: LearnPanel },
   { id: 'kirim', label: 'Kirim Cerita', icon: 'send', Panel: ContributePanel },
@@ -55,6 +58,10 @@ export default function App() {
       const st = useStore.getState();
       const overrides = await db.siteOverrides();
       if (Array.isArray(overrides) && overrides.length) st.setSites(overrides, true);
+      const geo = await db.geoOverrides();
+      if (geo?.boundary && geo?.archiveCoords) st.setGeo(geo, true);
+      st.setTracks(await db.tracks());
+      st.setImports(await db.imports());
       st.setFieldPoints(await db.fieldPoints());
       st.setProgress(await db.progress());
       // Tautan langsung ?situs=id (dipakai QR plang lapangan).
@@ -82,7 +89,7 @@ export default function App() {
     };
   }, []);
 
-  // Pintasan keyboard: Esc menutup detail, 1–7 pindah tab.
+  // Pintasan keyboard: Esc menutup detail, angka 1–8 pindah tab.
   useEffect(() => {
     const onKey = (e) => {
       if (e.target.closest('input, textarea, select, [contenteditable]')) return;
@@ -149,13 +156,10 @@ export default function App() {
       <TimeMachine />
       <MeasureHud />
       <TourHud />
+      <CalibrateHud />
       <Toast />
 
-      {admin && (
-        <Suspense fallback={null}>
-          <Admin onClose={() => setAdmin(false)} />
-        </Suspense>
-      )}
+      {admin && <Admin onClose={() => setAdmin(false)} />}
     </div>
   );
 }

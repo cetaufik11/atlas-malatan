@@ -23,7 +23,14 @@ async function run(name, viewport, steps) {
   await page.setViewport(viewport);
   if (process.env.NOSW) await page.setBypassServiceWorker(true);
   page.on('response', (r) => r.status() >= 400 && errors.push('[' + name + '] HTTP ' + r.status() + ' ' + r.url().slice(0, 140)));
-  page.on('console', (m) => m.type() === 'error' && errors.push(`[${name}] ${m.text()}`));
+  page.on('console', async (m) => {
+    if (m.type() !== 'error' || /Failed to load resource/.test(m.text())) return;
+    // Uraikan objek Error agar pesannya terbaca (bukan "JSHandle@error").
+    const parts = await Promise.all(
+      m.args().map((a) => a.evaluate((v) => (v instanceof Error ? v.stack || v.message : typeof v === 'object' ? JSON.stringify(v, Object.getOwnPropertyNames(v || {})).slice(0, 400) : String(v))).catch(() => '?')),
+    );
+    errors.push(`[${name}] KONSOL: ${parts.join(' | ').slice(0, 900)}`);
+  });
   page.on('requestfailed', (r) => errors.push('[' + name + '] FAIL ' + r.url().slice(0, 140) + ' ' + r.failure()?.errorText));
   page.on('pageerror', (e) => errors.push(`[${name}] PAGEERROR ${e.message}`));
   await page.goto(URL, { waitUntil: 'domcontentloaded', timeout: 60000 });

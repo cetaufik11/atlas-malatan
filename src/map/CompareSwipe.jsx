@@ -4,18 +4,17 @@ import { useEffect, useRef } from 'react';
 import maplibregl from 'maplibre-gl';
 import { useStore, mapRef } from '../store.js';
 import { waybackUrl, DEM_URL } from './style.js';
-import geo from '../data/geo.json';
+import { archiveTilesUrl } from './archiveTiles.js';
 
 export const ARCHIVE_2018 = 'archive2018';
 
 function styleFor(source, terrain) {
-  const ab = geo.archiveBounds;
   const isArchive = source === ARCHIVE_2018;
   return {
     version: 8,
     sources: {
       img: isArchive
-        ? { type: 'image', url: 'media/peta-arsip-2018.jpg', coordinates: [[ab.west, ab.north], [ab.east, ab.north], [ab.east, ab.south], [ab.west, ab.south]] }
+        ? { type: 'raster', tiles: [archiveTilesUrl()], tileSize: 256, minzoom: 11, maxzoom: 18 }
         : { type: 'raster', tiles: [waybackUrl(source.release)], tileSize: 256, maxzoom: source.maxzoom ?? 17 },
       dem: { type: 'raster-dem', tiles: [DEM_URL], tileSize: 256, maxzoom: 15, encoding: 'terrarium' },
     },

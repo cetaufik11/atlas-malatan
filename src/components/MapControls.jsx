@@ -10,8 +10,11 @@ const LAYER_LABELS = {
   roads: 'Jalan',
   rivers: 'Sungai',
   hillshade: 'Bayangan relief',
+  contours: 'Garis kontur',
   labels: 'Nama tempat (satelit)',
   fieldPoints: 'Titik temuan lapangan',
+  tracks: 'Jejak GPS',
+  imports: 'Lapisan impor',
 };
 
 export default function MapControls() {

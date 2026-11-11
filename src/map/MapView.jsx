@@ -2,9 +2,27 @@ import { useEffect, useRef, useState } from 'react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { useStore, mapRef, useFilteredSites } from '../store.js';
-import { buildStyle, BASEMAPS } from './style.js';
+import mlcontour from 'maplibre-contour';
+import { buildStyle, BASEMAPS, DEM_URL, dataGeoJSON, skyFor } from './style.js';
+import { sunPosition, wibDate } from '../lib/sun.js';
+import { registerOverlay } from './overlayTiles.js';
+import { setArchiveCoords } from './archiveTiles.js';
 import { CATEGORIES, STATUSES, CENTER } from '../data/meta.js';
 import { siteIconSvg } from '../components/icons.jsx';
+
+// Garis kontur dihitung di browser (web worker) dari ubin DEM yang sama dengan medan 3D.
+const demSource = new mlcontour.DemSource({ url: DEM_URL, encoding: 'terrarium', maxzoom: 14, worker: true, cacheSize: 120, timeoutMs: 20000 });
+demSource.setupMaplibre(maplibregl);
+const CONTOUR_TILES = demSource.contourProtocolUrl({
+  // zoom: [interval garis tipis, interval garis tebal] dalam meter
+  thresholds: { 11: [200, 1000], 12: [100, 500], 13: [50, 250], 14: [25, 100], 15: [10, 50], 16: [5, 25] },
+  elevationKey: 'ele',
+  levelKey: 'level',
+  contourLayer: 'contours',
+});
+
+// Lebih banyak unduhan ubin paralel: citra, label, dan elevasi berasal dari server berbeda.
+maplibregl.config.MAX_PARALLEL_IMAGE_REQUESTS = 32;
 
 const ALL_BASEMAP_LAYERS = Object.values(BASEMAPS).flatMap((b) => b.layers);
 
@@ -19,6 +37,7 @@ export default function MapView() {
   const markers = useRef({});
   const userMarker = useRef(null);
   const [isReady, setIsReady] = useState(false);
+  const archiveCoordsRef = useRef(useStore.getState().geo.archiveCoords);
 
   const basemap = useStore((s) => s.basemap);
   const terrain = useStore((s) => s.terrain);
@@ -34,6 +53,14 @@ export default function MapView() {
   const fieldPoints = useStore((s) => s.fieldPoints);
   const tour = useStore((s) => s.tour);
   const sites = useStore((s) => s.sites);
+  const geo = useStore((s) => s.geo);
+  const overlay = useStore((s) => s.overlay);
+  const overlayOpacity = useStore((s) => s.overlayOpacity);
+  const sun = useStore((s) => s.sun);
+  const tracks = useStore((s) => s.tracks);
+  const recording = useStore((s) => s.recording);
+  const imports = useStore((s) => s.imports);
+  const pickedPoint = useStore((s) => s.pickedPoint);
   const visible = useFilteredSites();
 
   // ---------- Buat peta sekali ----------
@@ -41,7 +68,14 @@ export default function MapView() {
     const fromHash = readHash();
     const map = new maplibregl.Map({
       container: el.current,
-      style: buildStyle({ basemap, imagery }),
+      style: buildStyle({
+        basemap,
+        imagery,
+        geo: useStore.getState().geo,
+        contourTiles: CONTOUR_TILES,
+        archiveTiles: setArchiveCoords(useStore.getState().geo.archiveCoords),
+        terrain: useStore.getState().terrain ? useStore.getState().exaggeration : null,
+      }),
       center: fromHash?.center ?? CENTER,
       zoom: fromHash?.zoom ?? 16.6,
       pitch: fromHash?.pitch ?? (terrain ? 55 : 0),
@@ -68,6 +102,20 @@ export default function MapView() {
     // Semua efek di bawah bergantung pada isReady agar berjalan ulang dengan nilai terbaru.
     map.on('style.load', () => setIsReady(true));
 
+    // Ubin yang gagal dimuat (sinyal putus-nyambung di lapangan) cukup jadi peringatan, bukan error.
+    map.on('error', (e) => console.warn('[peta]', e?.error?.message || e?.error || e));
+
+    // Penangkal bug MapLibre 4.x: setelah easeTo/flyTo dengan medan aktif, _elevationFreeze
+    // tidak pernah dikembalikan ke false. Bila animasi selesai sebelum ubin elevasi termuat,
+    // kamera terkunci di ketinggian 0 m — di lereng Sindoro (±2.000 m) itu berarti kamera
+    // berada di dalam gunung (layar hitam, penanda hilang). Cairkan lagi tiap gerakan selesai.
+    map.on('moveend', () => {
+      if (map.terrain && !map.isMoving() && map._elevationFreeze) {
+        map._elevationFreeze = false;
+        map.triggerRepaint();
+      }
+    });
+
     // Simpan posisi kamera di URL (bisa dibagikan).
     let t;
     map.on('moveend', () => {
@@ -83,6 +131,7 @@ export default function MapView() {
       const st = useStore.getState();
       if (st.tool === 'line' || st.tool === 'area') st.addMeasurePt([e.lngLat.lng, e.lngLat.lat]);
       if (st.tool === 'quiz') useStore.setState({ quizClick: [e.lngLat.lng, e.lngLat.lat] });
+      if (st.tool === 'viewshed') useStore.setState({ pickedPoint: [e.lngLat.lng, e.lngLat.lat] });
     });
     map.on('dblclick', (e) => {
       if (useStore.getState().tool) e.preventDefault();
@@ -112,10 +161,27 @@ export default function MapView() {
   // ---------- Medan 3D ----------
   useEffect(() => {
     whenReady((map) => {
+      const wasOn = !!map.getTerrain();
       if (terrain) {
-        map.setTerrain({ source: 'dem', exaggeration });
-        if (map.getPitch() < 20) map.easeTo({ pitch: 55, duration: 900 });
-      } else {
+        // Hindari membuat ulang medan bila tidak ada yang berubah (mis. saat pertama siap).
+        if (!wasOn || map.getTerrain().exaggeration !== exaggeration) map.setTerrain({ source: 'dem', exaggeration });
+        map._elevationFreeze = false; // lihat catatan penangkal bug di atas
+        if (!wasOn && map.getPitch() < 20) {
+          // Jangan langsung memiringkan kamera: selama ubin elevasi belum termuat, MapLibre mengira
+          // kamera berada di bawah tanah lalu mengubah zoom & kemiringan sendiri (bertabrakan
+          // dengan animasi). Tunggu peta 'idle' (ubin elevasi siap), baru miringkan.
+          let done = false;
+          const tilt = () => {
+            if (done || !map.getTerrain()) return;
+            done = true;
+            map._elevationFreeze = false;
+            const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            map.easeTo({ pitch: 55, duration: reduce ? 0 : 900 });
+          };
+          map.once('idle', tilt);
+          setTimeout(tilt, 3000); // cadangan bila sinyal lambat
+        }
+      } else if (wasOn) {
         map.setTerrain(null);
         map.easeTo({ pitch: 0, duration: 700 });
       }
@@ -129,15 +195,110 @@ export default function MapView() {
       ['boundary-fill', 'boundary-glow', 'boundary-line'].forEach((id) => map.setLayoutProperty(id, 'visibility', v(layers.boundary)));
       ['roads', 'roads-casing'].forEach((id) => map.setLayoutProperty(id, 'visibility', v(layers.roads)));
       map.setLayoutProperty('rivers', 'visibility', v(layers.rivers));
-      map.setLayoutProperty('hillshade', 'visibility', v(layers.hillshade));
+      map.setLayoutProperty('hillshade', 'visibility', v(layers.hillshade || sun.on));
+      ['contours', 'contour-labels'].forEach((id) => map.setLayoutProperty(id, 'visibility', v(layers.contours)));
+      ['tracks-casing', 'tracks-line'].forEach((id) => map.setLayoutProperty(id, 'visibility', v(layers.tracks)));
+      ['imports-fill', 'imports-line', 'imports-pt'].forEach((id) => map.setLayoutProperty(id, 'visibility', v(layers.imports)));
       map.setLayoutProperty('archive2018', 'visibility', v(layers.archive2018));
       ['field-pts', 'field-labels'].forEach((id) => map.setLayoutProperty(id, 'visibility', v(layers.fieldPoints)));
     });
-  }, [layers, isReady]);
+  }, [layers, sun.on, isReady]);
 
   useEffect(() => {
     whenReady((map) => map.setPaintProperty('archive2018', 'raster-opacity', archiveOpacity));
   }, [archiveOpacity, isReady]);
+
+  // ---------- Geometri (bisa dikalibrasi admin) ----------
+  useEffect(() => {
+    whenReady((map) => {
+      const d = dataGeoJSON(geo);
+      map.getSource('boundary')?.setData(d.boundary);
+      map.getSource('roads')?.setData(d.roads);
+      map.getSource('rivers')?.setData(d.rivers);
+      // Setel ulang ubin peta arsip hanya bila sudutnya benar-benar berubah (setTiles membatalkan
+      // permintaan yang sedang berjalan dan memuat ulang semuanya).
+      if (geo.archiveCoords !== archiveCoordsRef.current) {
+        archiveCoordsRef.current = geo.archiveCoords;
+        map.getSource('archive2018')?.setTiles([setArchiveCoords(geo.archiveCoords)]);
+      }
+    });
+  }, [geo, isReady]);
+
+  // ---------- Overlay hasil analisis (lereng, viewshed, perubahan lahan) ----------
+  useEffect(() => {
+    whenReady((map) => {
+      if (map.getLayer('analysis')) map.removeLayer('analysis');
+      if (map.getSource('analysis')) map.removeSource('analysis');
+      const source = registerOverlay(overlay);
+      if (!source) return;
+      map.addSource('analysis', source);
+      map.addLayer(
+        {
+          id: 'analysis',
+          type: 'raster',
+          source: 'analysis',
+          paint: { 'raster-opacity': useStore.getState().overlayOpacity, 'raster-fade-duration': 0, 'raster-resampling': overlay.smooth ? 'linear' : 'nearest' },
+        },
+        'labels',
+      );
+    });
+  }, [overlay, isReady]);
+
+  useEffect(() => {
+    whenReady((map) => map.getLayer('analysis') && map.setPaintProperty('analysis', 'raster-opacity', overlayOpacity));
+  }, [overlayOpacity, overlay, isReady]);
+
+  useEffect(() => {
+    whenReady((map) =>
+      map.getSource('pick')?.setData(
+        pickedPoint && overlay?.kind === 'viewshed'
+          ? { type: 'Feature', properties: {}, geometry: { type: 'Point', coordinates: pickedPoint } }
+          : { type: 'FeatureCollection', features: [] },
+      ),
+    );
+  }, [pickedPoint, overlay, isReady]);
+
+  // ---------- Simulasi matahari ----------
+  useEffect(() => {
+    whenReady((map) => {
+      const rasters = [...ALL_BASEMAP_LAYERS, ...imagery.map((im) => 'wb-' + im.release)];
+      if (!sun.on) {
+        rasters.forEach((id) => map.setPaintProperty(id, 'raster-brightness-max', 1));
+        map.setPaintProperty('hillshade', 'hillshade-illumination-direction', 335);
+        map.setPaintProperty('hillshade', 'hillshade-exaggeration', 0.55);
+        map.setSky(skyFor('day'));
+        return;
+      }
+      const [lng, lat] = geo.boundary[0];
+      const { altitude, azimuth } = sunPosition(wibDate(sun.date, sun.hour), lat, lng);
+      const day = Math.min(1, Math.max(0, (altitude + 6) / 24));
+      rasters.forEach((id) => map.setPaintProperty(id, 'raster-brightness-max', 0.2 + 0.8 * day));
+      map.setPaintProperty('hillshade', 'hillshade-illumination-direction', azimuth);
+      // Matahari rendah → bayangan lereng lebih tegas.
+      map.setPaintProperty('hillshade', 'hillshade-exaggeration', altitude > 0 ? Math.min(0.95, Math.max(0.3, 0.95 - (altitude / 90) * 0.6)) : 0.15);
+      map.setSky(skyFor(altitude < -4 ? 'night' : altitude < 12 ? 'golden' : 'day'));
+    });
+  }, [sun, geo, imagery, isReady]);
+
+  // ---------- Jejak GPS ----------
+  useEffect(() => {
+    whenReady((map) => {
+      const toLine = (pts, live) => ({ type: 'Feature', properties: { live }, geometry: { type: 'LineString', coordinates: pts.map((p) => [p.lng, p.lat]) } });
+      const features = tracks.filter((t) => t.points.length > 1).map((t) => toLine(t.points, false));
+      if (recording?.points.length > 1) features.push(toLine(recording.points, true));
+      map.getSource('tracks')?.setData({ type: 'FeatureCollection', features });
+    });
+  }, [tracks, recording, isReady]);
+
+  // ---------- Lapisan impor (GPX/KML/GeoJSON) ----------
+  useEffect(() => {
+    whenReady((map) =>
+      map.getSource('imports')?.setData({
+        type: 'FeatureCollection',
+        features: imports.filter((l) => l.visible !== false).flatMap((l) => l.data.features.map((f) => ({ ...f, properties: { ...f.properties, _color: l.color } }))),
+      }),
+    );
+  }, [imports, isReady]);
 
   // ---------- Mesin waktu (citra historis) ----------
   useEffect(() => {
@@ -222,7 +383,7 @@ export default function MapView() {
         features.push({ type: 'Feature', properties: {}, geometry: { type: 'LineString', coordinates: pts } });
       }
       map.getSource('measure')?.setData({ type: 'FeatureCollection', features });
-      map.getCanvas().style.cursor = tool === 'line' || tool === 'area' ? 'crosshair' : '';
+      map.getCanvas().style.cursor = ['line', 'area', 'viewshed', 'quiz'].includes(tool) ? 'crosshair' : '';
     });
   }, [measurePts, tool, isReady]);
 

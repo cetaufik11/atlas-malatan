@@ -5,13 +5,14 @@ import { downloadText } from '../lib/storage.js';
 import { bboxOf, fmtArea, polygonArea } from '../lib/geo.js';
 import { SAT_URL, DEM_URL, dataGeoJSON } from '../map/style.js';
 import { STATUSES, CATEGORIES } from '../data/meta.js';
-import geo from '../data/geo.json';
+import { TrackRecorder, LayerImport, Weather } from '../components/FieldTools.jsx';
 import { Icon } from '../components/icons.jsx';
 
 export default function ToolsPanel() {
   const tool = useStore((s) => s.tool);
   const setTool = useStore((s) => s.setTool);
   const sites = useStore((s) => s.sites);
+  const geo = useStore((s) => s.geo);
   const notify = useStore((s) => s.notify);
   const setAdminOpen = useStore((s) => s.setAdminOpen);
   const [dl, setDl] = useState(null); // { done, total, failed }
@@ -42,7 +43,7 @@ export default function ToolsPanel() {
   };
 
   const exportGeoJSON = () => {
-    const d = dataGeoJSON();
+    const d = dataGeoJSON(geo);
     const fc = {
       type: 'FeatureCollection',
       features: [
@@ -123,6 +124,11 @@ export default function ToolsPanel() {
           <span className="small muted">Sawah, ladang tembakau, pekarangan</span>
         </button>
       </div>
+
+      <h3 className="section-title">Survei lapangan</h3>
+      <TrackRecorder />
+      <LayerImport />
+      <Weather />
 
       <h3 className="section-title">Pakai di lapangan tanpa sinyal</h3>
       <article className="card">
