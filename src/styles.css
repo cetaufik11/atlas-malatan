@@ -402,6 +402,12 @@ legend { font-weight: 700; font-size: 0.82rem; padding: 0 4px; }
   body { overflow: visible; }
 }
 
+/* ===== Pemilih suara narasi ===== */
+.voice-picker { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; font-weight: 600; margin: 0 0 12px; }
+.voice-picker span { white-space: nowrap; color: var(--muted); }
+.voice-picker select { flex: 1; min-width: 0; padding: 6px 8px; font-size: 0.82rem; }
+.voice-picker.compact { margin: -4px 0 12px; }
+
 /* ===== Analisis & alat lapangan ===== */
 .overlay-bar { display: flex; gap: 10px; align-items: flex-end; padding: 10px 12px; border: 1px solid var(--accent); border-radius: var(--radius); background: color-mix(in srgb, var(--accent) 8%, var(--surface)); position: sticky; top: -4px; z-index: 2; }
 .overlay-bar .range { flex: 1; margin: 0; }

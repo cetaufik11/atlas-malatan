@@ -29,7 +29,7 @@ Cara memperbaiki (**Alat → Mode admin → Kalibrasi posisi**):
 |---|---|
 | Peta | MapLibre GL, medan 3D (DEM Terrarium), langit & kabut, 4 peta dasar, bayangan relief, batas/jalan/sungai |
 | Mesin waktu | 11 citra satelit berbeda 2014–2026 (Esri Wayback), putar otomatis, geser-bandingkan dua tahun atau dengan Peta Arsip 2018 |
-| Narasi | Rekaman suara alami per situs (Gemini TTS, `npm run narasi`) untuk tombol Dengarkan dan tur; otomatis jatuh ke suara perangkat bila rekaman tidak ada atau teks berubah |
+| Narasi | Rekaman suara alami per situs dalam dua pilihan suara, Charon dan Kore (Gemini TTS, `npm run narasi`) untuk tombol Dengarkan dan tur; otomatis jatuh ke suara perangkat bila rekaman tidak ada atau teks berubah |
 | Situs | 14 situs, label status narasi (Terverifikasi/Observasi/Tutur/Legenda/Perlu kajian/Draf) terpisah dari status koordinat, filter & cari, narasi suara, QR plang, rute, bagikan tautan `?situs=id` |
 | Arsip | Katalog semua sumber & media lintas situs, galeri foto, pemutar audio + transkrip |
 | Cagar budaya | Legenda Mbah Malat vs temuan arkeologis, catat titik temuan dengan GPS, draf laporan ke dinas, ekspor GeoJSON, ringkasan UU 11/2010 |

@@ -127,6 +127,13 @@ export const useStore = create((set, get) => ({
   tracking: false,
   setTracking: (tracking) => set({ tracking }),
 
+  // ---- Suara narasi rekaman yang dipilih pengunjung (null = suara pertama yang tersedia) ----
+  narrator: localPref('narrator', null),
+  setNarrator: (narrator) => {
+    setLocalPref('narrator', narrator);
+    set({ narrator });
+  },
+
   // ---- Tur ----
   tour: null, // { id, step, playing, voice }
   setTour: (tour) => set({ tour }),

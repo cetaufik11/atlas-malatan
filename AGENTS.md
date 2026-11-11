@@ -57,7 +57,8 @@ git add -A && git commit -m "Tambah foto <nama situs>" && git push
 
 ## Narasi suara (Gemini TTS)
 
-Tombol **Dengarkan** dan tur memutar rekaman di `public/media/narasi/<id-situs>.mp3` bila terdaftar di
+Tombol **Dengarkan** dan tur memutar rekaman di `public/media/narasi/<suara>/<id-situs>.mp3` (pengunjung
+memilih suara lewat pemilih "Suara narasi") bila terdaftar di
 `src/data/narration.json`; kalau tidak ada (atau teks situs sudah berubah), aplikasi memakai suara perangkat.
 
 Membuat / memperbarui rekaman (butuh ffmpeg dan kunci API Gemini):
@@ -66,8 +67,9 @@ Membuat / memperbarui rekaman (butuh ffmpeg dan kunci API Gemini):
 # sekali saja: simpan kunci di .env.local (berkas ini TIDAK ikut ke git)
 echo "GEMINI_API_KEYS=kunci1,kunci2" > .env.local
 
-npm run narasi                      # hanya situs yang teksnya berubah
-npm run narasi -- --voice Charon    # ganti suara: Aoede (bawaan), Kore, Charon, Fenrir, Puck
+npm run narasi                      # hanya rekaman yang teksnya berubah; suara bawaan: Charon + Kore
+npm run narasi -- --voices Charon,Kore,Aoede   # atur daftar suara (tersedia juga Fenrir, Puck);
+                                    # suara pertama jadi pilihan awal, suara yang tidak disebut dihapus
 npm run narasi -- --only makam-leluhur --force
 npm run narasi -- --dry             # lihat teks yang akan dibacakan, tanpa memanggil API
 ```

@@ -4,6 +4,7 @@ import { pathLength, fmtDistance, walkMinutes } from '../lib/geo.js';
 import { startTracking } from '../lib/gps.js';
 import { narrationSupported } from '../lib/narration.js';
 import { Icon } from '../components/icons.jsx';
+import VoicePicker from '../components/VoicePicker.jsx';
 
 export default function ToursPanel() {
   const sites = useStore((s) => s.sites);
@@ -30,6 +31,8 @@ export default function ToursPanel() {
           otomatis saat kamu sudah dekat.
         </p>
       </header>
+
+      <VoicePicker />
 
       {TOURS.map((t) => {
         const stops = resolveStops(t, sites);

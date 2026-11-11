@@ -6,12 +6,14 @@
 //   (atau taruh GEMINI_API_KEYS=... di berkas .env.local — berkas itu tidak ikut ke git)
 //
 // Opsi:
-//   --voice Aoede      suara: Aoede (hangat), Kore (jernih), Charon (berat, dokumenter), Fenrir, Puck
-//   --only id1,id2     hanya situs tertentu
-//   --force            buat ulang walau teksnya tidak berubah
-//   --dry              tampilkan teks yang akan dibacakan, tanpa memanggil API
+//   --voices Charon,Kore   daftar suara yang direkam (bawaan). Suara pertama jadi pilihan awal di aplikasi.
+//                          Tersedia: Charon (pria, berat), Kore (wanita, jernih), Aoede, Fenrir, Puck
+//   --only id1,id2         hanya situs tertentu
+//   --force                buat ulang walau teksnya tidak berubah
+//   --dry                  tampilkan teks yang akan dibacakan, tanpa memanggil API
 //
 // Rekaman hanya dibuat ulang bila teks situs berubah (dicek lewat sidik jari teks).
+// Proses yang terputus (mis. kuota habis) aman diulang: yang sudah jadi dilewati.
 import fs from 'node:fs';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
@@ -35,9 +37,9 @@ function loadEnvLocal() {
 loadEnvLocal();
 
 const MODEL = process.env.GEMINI_TTS_MODEL || 'gemini-3.8-flash-tts';
-const VOICE = opt('voice', process.env.GEMINI_TTS_VOICE || 'Aoede');
+const VOICES = opt('voices', process.env.GEMINI_TTS_VOICES || 'Charon,Kore').split(',').map((v) => v.trim()).filter(Boolean);
 const STYLE = process.env.GEMINI_TTS_STYLE || ''; // mis. "Bacakan dengan hangat dan tenang:"
-const OUT_DIR = 'public/media/narasi';
+const OUT_ROOT = 'public/media/narasi';
 const MANIFEST = 'src/data/narration.json';
 const DRY = flag('dry');
 
@@ -55,7 +57,7 @@ let keyIdx = 0;
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 // ---- Panggil Gemini TTS (rotasi kunci saat kuota habis) ----
-async function synthesize(text) {
+async function synthesize(text, voice) {
   let lastErr;
   for (let attempt = 0; attempt < keys.length * 2 + 1; attempt++) {
     const key = keys[keyIdx % keys.length];
@@ -67,13 +69,13 @@ async function synthesize(text) {
           contents: [{ parts: [{ text: STYLE ? `${STYLE} ${text}` : text }] }],
           generationConfig: {
             responseModalities: ['AUDIO'],
-            speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: VOICE } } },
+            speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: voice } } },
           },
         }),
       });
       const body = await res.json().catch(() => ({}));
       if (res.status === 429 || /quota|exhausted/i.test(body?.error?.message || '')) {
-        console.log(`   kunci #${(keyIdx % keys.length) + 1} kehabisan kuota, pindah ke kunci berikutnya…`);
+        console.log(`\n   kunci #${(keyIdx % keys.length) + 1} kehabisan kuota, pindah ke kunci berikutnya…`);
         keyIdx++;
         lastErr = new Error('Kuota habis di semua kunci.');
         if (attempt >= keys.length - 1) await sleep(20000); // semua kunci sudah dicoba: tunggu jendela kuota
@@ -106,56 +108,77 @@ function toMp3(pcm, rate, outFile) {
 
 // ---- Jalankan ----
 const sites = JSON.parse(fs.readFileSync('src/data/sites.json', 'utf8'));
-const manifest = fs.existsSync(MANIFEST) ? JSON.parse(fs.readFileSync(MANIFEST, 'utf8')) : { items: {} };
-manifest.items ||= {};
+let manifest = fs.existsSync(MANIFEST) ? JSON.parse(fs.readFileSync(MANIFEST, 'utf8')) : {};
+// Bentuk manifest: { model, generated, voices: [..], items: { <Suara>: { <idSitus>: { file, hash, seconds } } } }
+if (!manifest.items || Object.values(manifest.items).some((v) => v && typeof v.file === 'string')) manifest = { items: {} }; // format lama (satu suara)
 const only = opt('only', '').split(',').filter(Boolean);
-fs.mkdirSync(OUT_DIR, { recursive: true });
+const save = () => {
+  manifest.model = MODEL;
+  manifest.voices = VOICES.filter((v) => Object.keys(manifest.items[v] || {}).length);
+  manifest.generated = new Date().toISOString().slice(0, 10);
+  fs.writeFileSync(MANIFEST, JSON.stringify(manifest, null, 2) + '\n');
+};
 
 let made = 0, skipped = 0, failed = 0;
-for (const site of sites) {
-  if (only.length && !only.includes(site.id)) continue;
-  const text = narrationText(site);
-  const hash = textHash(text);
-  const file = `media/narasi/${site.id}.mp3`;
-  const abs = path.join('public', file);
-  const prev = manifest.items[site.id];
+for (const voice of VOICES) {
+  const dir = voice.toLowerCase();
+  if (!DRY) fs.mkdirSync(path.join(OUT_ROOT, dir), { recursive: true });
+  manifest.items[voice] ||= {};
+  for (const site of sites) {
+    if (only.length && !only.includes(site.id)) continue;
+    const text = narrationText(site);
+    const hash = textHash(text);
+    const file = `media/narasi/${dir}/${site.id}.mp3`;
+    const abs = path.join('public', file);
+    const prev = manifest.items[voice][site.id];
 
-  if (DRY) {
-    console.log(`\n[${site.id}] ${text.split(/\s+/).length} kata\n${text}`);
-    continue;
-  }
-  if (!flag('force') && prev?.hash === hash && prev?.voice === VOICE && fs.existsSync(abs)) {
-    skipped++;
-    continue;
-  }
-  process.stdout.write(`• ${site.id} … `);
-  try {
-    const { pcm, rate } = await synthesize(text);
-    toMp3(pcm, rate, abs);
-    const seconds = Math.round(pcm.length / 2 / rate);
-    manifest.items[site.id] = { file, hash, voice: VOICE, seconds };
-    // Simpan tiap selesai satu situs, supaya proses yang terputus bisa dilanjutkan.
-    Object.assign(manifest, { model: MODEL, voice: VOICE, generated: new Date().toISOString().slice(0, 10) });
-    fs.writeFileSync(MANIFEST, JSON.stringify(manifest, null, 2) + '\n');
-    console.log(`${seconds} dtk, ${Math.round(fs.statSync(abs).size / 1024)} KB`);
-    made++;
-    await sleep(1500); // sopan terhadap batas permintaan per menit
-  } catch (e) {
-    console.log('GAGAL: ' + e.message);
-    failed++;
-  }
-}
-
-// Buang rekaman milik situs yang sudah dihapus.
-if (!DRY && !only.length) {
-  const ids = new Set(sites.map((s) => s.id));
-  for (const id of Object.keys(manifest.items)) {
-    if (!ids.has(id)) {
-      fs.rmSync(path.join('public', manifest.items[id].file), { force: true });
-      delete manifest.items[id];
+    if (DRY) {
+      if (voice === VOICES[0]) console.log(`\n[${site.id}] ${text.split(/\s+/).length} kata\n${text}`);
+      continue;
+    }
+    if (!flag('force') && prev?.hash === hash && fs.existsSync(abs)) {
+      skipped++;
+      continue;
+    }
+    process.stdout.write(`• ${voice} · ${site.id} … `);
+    try {
+      const { pcm, rate } = await synthesize(text, voice);
+      toMp3(pcm, rate, abs);
+      const seconds = Math.round(pcm.length / 2 / rate);
+      manifest.items[voice][site.id] = { file, hash, seconds };
+      save(); // simpan tiap selesai satu rekaman, supaya proses yang terputus bisa dilanjutkan
+      console.log(`${seconds} dtk, ${Math.round(fs.statSync(abs).size / 1024)} KB`);
+      made++;
+      await sleep(1500); // sopan terhadap batas permintaan per menit
+    } catch (e) {
+      console.log('GAGAL: ' + e.message);
+      failed++;
     }
   }
-  fs.writeFileSync(MANIFEST, JSON.stringify(manifest, null, 2) + '\n');
 }
-if (!DRY) console.log(`\nSelesai: ${made} dibuat, ${skipped} sudah ada, ${failed} gagal. Model ${MODEL}, suara ${VOICE}.`);
+
+// Bersih-bersih: suara yang tidak lagi dipakai, situs yang sudah dihapus, dan berkas format lama.
+if (!DRY && !only.length) {
+  const ids = new Set(sites.map((s) => s.id));
+  for (const voice of Object.keys(manifest.items)) {
+    if (!VOICES.includes(voice)) {
+      fs.rmSync(path.join(OUT_ROOT, voice.toLowerCase()), { recursive: true, force: true });
+      delete manifest.items[voice];
+      continue;
+    }
+    for (const id of Object.keys(manifest.items[voice])) {
+      if (!ids.has(id)) {
+        fs.rmSync(path.join('public', manifest.items[voice][id].file), { force: true });
+        delete manifest.items[voice][id];
+      }
+    }
+  }
+  for (const f of fs.readdirSync(OUT_ROOT)) if (f.endsWith('.mp3')) fs.rmSync(path.join(OUT_ROOT, f)); // rekaman lama tanpa folder suara
+  for (const d of fs.readdirSync(OUT_ROOT)) {
+    const p = path.join(OUT_ROOT, d);
+    if (fs.statSync(p).isDirectory() && !VOICES.some((v) => v.toLowerCase() === d)) fs.rmSync(p, { recursive: true, force: true });
+  }
+  save();
+}
+if (!DRY) console.log(`\nSelesai: ${made} dibuat, ${skipped} sudah ada, ${failed} gagal. Model ${MODEL}, suara ${VOICES.join(' + ')}.`);
 process.exit(failed ? 1 : 0);

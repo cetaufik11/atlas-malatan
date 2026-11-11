@@ -9,6 +9,7 @@ import { Icon, SiteIcon } from './icons.jsx';
 import { StatusBadge } from './Badges.jsx';
 import MediaGallery from './MediaGallery.jsx';
 import { CONFIG } from '../data/config.js';
+import VoicePicker from './VoicePicker.jsx';
 
 export function siteUrl(id) {
   const u = new URL(CONFIG.publicUrl || location.href);
@@ -25,6 +26,7 @@ export default function SiteDetail() {
   const userPos = useStore((s) => s.userPos);
   const setTab = useStore((s) => s.setTab);
   const notify = useStore((s) => s.notify);
+  useStore((s) => s.narrator); // render ulang saat suara narasi diganti
   const [qr, setQr] = useState(null);
   const [demElev, setDemElev] = useState(null);
   const [reading, setReading] = useState(false);
@@ -139,6 +141,8 @@ export default function SiteDetail() {
             <Icon name="walk" size={14} /> Rute
           </a>
         </div>
+
+        <VoicePicker compact onChange={() => setReading(false)} />
 
         {nav && (
           <p className="nav-hint">
